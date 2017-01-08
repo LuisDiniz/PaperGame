@@ -11,4 +11,6 @@ package br.cefetmg.games;
  */
 public class Princesa {
     
+//    private Texture texturaPrincesa;
+    
 }

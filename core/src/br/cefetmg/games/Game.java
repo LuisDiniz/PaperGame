@@ -10,44 +10,43 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 
 public class Game extends ApplicationAdapter {
-    
+    private SpriteBatch batch;
+    private OrthographicCamera camera;      
+    // Constantes
     private final static int OBJETIVO_POS_X = 500;
     private final static int OBJETIVO_POS_Y = 12;
     private final static int VELOCIDADE_CAMERA_X = 5;
-    private final static int VELOCIDADE_HEROI_X = 1;
-    private final static int VELOCIDADE_HEROI_Y = 1;
-
-    private SpriteBatch batch;
-    
-//    private Princesa princesa;
-//    private Heroi heroi;
-    
-    //private Pedra pedra;
+    private final static int POSICAO_INICIAL_HEROI_X = 2900;
+    private final static int POSICAO_INICIAL_HEROI_Y = 11; 
+    // Texturas
     private Texture mapa;
-    private Texture heroi;
     private Texture princesa;
-    private Texture spriteSheet;
-    private Texture texturaPlayer;
-    private Texture texturaPrincesa;
     private Texture setas;
-    private OrthographicCamera camera;    
-    private boolean comecoFase = true;
-    private boolean aparecerSetas = true;
+    // Modelos
+    private Heroi heroi;
+    //private Princesa princesa;
+    // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
+    // Variáveis de Controle
+    private boolean comecoFase = true;
+    private boolean aparecerSetas = true;
 	
         
     @Override
     public void create () {
         batch = new SpriteBatch();
         // Carrega as texturas 
-        mapa = new Texture("Mapa.png");        
-        heroi = new Texture("Heroi.png");
+        mapa = new Texture("Mapa.png");
+        heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
+        //heroi = new Texture("Heroi.png");
         princesa = new Texture("Princesa.png");
-        // Inicializa a câmera com o tamnho da tela
+        // Inicializa a câmera com o tamanho da tela
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         //camera = new OrthographicCamera(1000,500);                      
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        camera.position.set(mapa.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0);
+        //camera.position.x = heroi.getX() - (camera.viewportWidth / 2f);        
         camera.update();   
     }
 
@@ -58,8 +57,8 @@ public class Game extends ApplicationAdapter {
         
         batch.begin();
         
-        batch.draw(mapa, 0, 0);        
-        batch.draw(heroi, 2900, 0);
+        batch.draw(mapa, 0, 0);
+        heroi.render(batch);
         batch.draw(princesa, 0, 0);
         
         // Desenha a camera 
@@ -67,8 +66,8 @@ public class Game extends ApplicationAdapter {
         
         update();
         // Realiza a animação inicial do jogo apenas se estiver no começo da fase
-        if(comecoFase)
-            animacaoInicial();       
+//        if(comecoFase)
+//            animacaoInicial();       
         
         batch.end();
     }
@@ -80,18 +79,31 @@ public class Game extends ApplicationAdapter {
     }
     
     public void update(){
-        // Animação para mover a camera do objetivo para o a posição do jogador
-        // Verifica se é o começo do jogo
-//        if (comecoJogo) {
-//            mostrarObjetivo(princesa.x, princesa.y);
-//            moverCameraObjetivoJogador(princesa.x, princesa.y);
-//        } 
         
-//        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {;
-//            camera.position.x = camera.position.x - 5;
-//        }        
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
+                heroi.andarDireita();
+            if (camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) 
+                camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
+        }        
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (heroi.getX() > 0)
+                heroi.andarEsquerda();
+            if (camera.position.x > camera.viewportWidth/2f)  
+                camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
+        }    
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            heroi.pular();
+        }     
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            // chama método para andar com o héroi
+        } 
+        
         camera.update();
-        System.out.println("Camera.x:"+camera.position.x);
+        
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
@@ -102,13 +114,13 @@ public class Game extends ApplicationAdapter {
                              camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
                          }
         };        
-        // ??????
-        Timer.schedule(moverCamera, 3f, 0.05f, (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2));// ??? ???
+        // Arrumar cálculo da câmera
+        Timer.schedule(moverCamera, 3f, 0.05f, (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2));
     }
 
     private void mostrarObjetivo(final int objetivoX, final int objetivoY) {
         //Posiciona a cameera no objetivo;
-        camera.position.x = objetivoX;
+        camera.position.x = heroi.getX();
         
         // Inicializa a task mostrarObjetivo
         mostrarObjetivo = new Timer.Task(){
@@ -124,9 +136,7 @@ public class Game extends ApplicationAdapter {
     private void animacaoInicial() {
         //mostrarObjetivo(OBJETIVO_POS_X, OBJETIVO_POS_Y);
         // Mudar animação para mover a camera para um x,y específico ??
-        moverCamera(2900, 0);
-        System.out.println("Camera.x:"+camera.position.x);
-        System.out.println("Largura Camera:"+camera.viewportWidth/2f);
+        moverCamera(heroi.getX(), 0);
         comecoFase = false;
     }
         
