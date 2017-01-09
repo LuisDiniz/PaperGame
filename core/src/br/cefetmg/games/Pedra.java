@@ -29,7 +29,7 @@ public class Pedra {
         this.y = 0;
         visivel = false;
         spritePedra = new Sprite(TEXTURA_PEDRA);
-        quadrosAnimacao = TextureRegion.split(TEXTURA_PEDRA_SPIRTESHEET, 89, 44);
+        quadrosAnimacao = TextureRegion.split(TEXTURA_PEDRA_SPIRTESHEET, 459, 226);
         // Define as animações
         animacaoPedra = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0], // 1ª linha, 1ª coluna

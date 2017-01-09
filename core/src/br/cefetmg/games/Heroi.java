@@ -14,7 +14,8 @@ public class Heroi {
     
     private Sprite spriteHeroi;
     private Texture texturaHeroi;
-    private Texture spriteSheet;
+    private Texture spriteSheetPular;
+    private Texture spriteSheetAbaixar;
     
     private Animation animacaoCorrente;
     private Animation animacaoAndarEsquerda;
@@ -22,43 +23,44 @@ public class Heroi {
     private Animation animacaoPular;
     private Animation animacaoAbaixar;
     
-    private TextureRegion[][] quadrosAnimacao;
+    private TextureRegion[][] quadrosAnimacaoPular;
+    private TextureRegion[][] quadrosAnimacaoAbaixar;
     private int x,y;
     float tempoAnimacao;
     
     public Heroi(int x, int y){
+        // Guarda a posição inicial do heroi                 
+        this.x = x;
+        this.y = y;
+        // Carrega as texturas e animações
         texturaHeroi = new Texture("Heroi.png");
         spriteHeroi = new Sprite(texturaHeroi);
-        spriteSheet = new Texture("spritesheet-pulo.png");
-        quadrosAnimacao = TextureRegion.split(spriteSheet, 109, 226);      
-        
+        spriteSheetPular = new Texture("spritesheet-pular.png");
+        spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
+        quadrosAnimacaoPular = TextureRegion.split(spriteSheetPular, 109, 226);      
+        quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
+        // Define as animações
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
-          quadrosAnimacao[0][0] // 1ª linha, 1ª coluna
-          //quadrosAnimacao[0][1] // idem, 2ª coluna
+            quadrosAnimacaoPular[0][0]
         });
         animacaoAndarEsquerda.setPlayMode(Animation.PlayMode.LOOP);
         
         animacaoAndarDireita = new Animation(0.3f, new TextureRegion[] {
-          quadrosAnimacao[0][0] // 1ª linha, 1ª coluna
-          //quadrosAnimacao[0][1] // idem, 2ª coluna
+            quadrosAnimacaoPular[0][0]
         });
         animacaoAndarDireita.setPlayMode(Animation.PlayMode.LOOP);
         
         animacaoAbaixar = new Animation(0.3f, new TextureRegion[] {
-          quadrosAnimacao[0][0] // 1ª linha, 1ª coluna
-          //quadrosAnimacao[0][1] // idem, 2ª coluna
+            quadrosAnimacaoAbaixar[0][0],
+            quadrosAnimacaoAbaixar[0][1]            
         });
-        
-                // Define as animações
+       
         animacaoPular = new Animation(0.3f, new TextureRegion[] {
-          quadrosAnimacao[0][0],
-          quadrosAnimacao[0][1]
+            quadrosAnimacaoPular[0][0],
+            quadrosAnimacaoPular[0][1]
         });
         
         animacaoCorrente = animacaoAndarEsquerda;
-                
-        this.x = x;
-        this.y = y;
     }
     
     public void andarDireita(){
@@ -77,7 +79,13 @@ public class Heroi {
     }
     
     public void abaixar(){
-        
+        animacaoCorrente = animacaoAbaixar;
+    }
+    
+    public void parado(){
+        // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??
+        // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??
+        animacaoCorrente = animacaoAndarEsquerda;
     }
 
     public int getX() {

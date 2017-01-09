@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Timer;
 
 public class Game extends ApplicationAdapter {
@@ -20,17 +18,21 @@ public class Game extends ApplicationAdapter {
     private final static int VELOCIDADE_CAMERA_X = 5;
     private final static int POSICAO_INICIAL_HEROI_X = 2900;
     private final static int POSICAO_INICIAL_HEROI_Y = 11;
-    private final static int POSICAO_SETAS_X = 0;
-    private final static int POSICAO_SETAS_Y = 0;
-    private final static int POSICAO_LABEL_PRINCESA_X = 125;
+    private final static int POSICAO_SETA_45_GRAUS_X = 75;
+    private final static int POSICAO_SETA_90_GRAUS_X = 155;
+    private final static int POSICAO_SETA_135_GRAUS_X = 225;
+    private final static int POSICAO_SETAS_Y = 225;
+    private final static int POSICAO_LABEL_PRINCESA_X = 100;
     private final static int POSICAO_LABEL_PRINCESA_Y = 300;
     // Texturas
     private Texture mapa;
     private Texture labelPrincesa;
-    private Texture setas;
+    private Texture seta45Graus;
+    private Texture seta90Graus;
+    private Texture seta135Graus;
     
     
-    private Texture rect;
+    private Texture caixa;
             
             
     // Modelos
@@ -42,7 +44,7 @@ public class Game extends ApplicationAdapter {
     private Timer.Task mostrarObjetivo;
     // Variáveis de Controle
     private boolean comecoFase;
-    private boolean aparecerSetas;
+    private boolean animacaoMostrarObjetivo;
     private boolean fimAnimacaoInicial;	
     private int contador;
     private int numeroRepeticoes;
@@ -51,28 +53,28 @@ public class Game extends ApplicationAdapter {
     public void create () {
         batch = new SpriteBatch();
         // Inicializa variáveis de controle;
-        aparecerSetas = true;
+        animacaoMostrarObjetivo = true;
         comecoFase = true;
-        //fimAnimacaoInicial = false;
+        fimAnimacaoInicial = false;
         
-        fimAnimacaoInicial = true;
+        //fimAnimacaoInicial = true; // DEBUG
         
         // Carrega as texturas 
         mapa = new Texture("Mapa.png");
-        labelPrincesa = new Texture("labelPrincesa.png");
-        rect = new Texture("rect.png");
-        
-        // ARRUMAR TEXTURA
-        setas = new Texture("labelPrincesa.png");        
-        //
-        
+        labelPrincesa = new Texture("LabelPrincesa.png");
+        caixa = new Texture("TexturaPreta.png");
+        seta45Graus = new Texture("Seta45Graus.png");
+        seta90Graus = new Texture("Seta90Graus.png");
+        seta135Graus = new Texture("Seta135Graus.png");
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
         // Inicializa a câmera com o tamanho da tela
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0);
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        
+        //camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
+        
         camera.update();   
     }
 
@@ -87,7 +89,7 @@ public class Game extends ApplicationAdapter {
         
         heroi.render(batch);
         princesa.render(batch);               
-        batch.draw(rect, 500, 0, 100, 100);
+        batch.draw(caixa, 500, 0, 100, 100);
         
         // Desenha a camera 
         batch.setProjectionMatrix(camera.combined); 
@@ -104,12 +106,16 @@ public class Game extends ApplicationAdapter {
     
     public void update(){
         
-        // Realiza a animação inicial do jogo apenas se estiver no começo da fase
-//        if (comecoFase)
-//            animacaoInicial();
-//        
-//        if (aparecerSetas)
-//            batch.draw(setas, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
+        // Realiza a animação inicial do jogo apenas se estiver nos começo da fase
+        if (comecoFase)
+            animacaoInicial();
+        
+        if (animacaoMostrarObjetivo){
+            //batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
+            batch.draw(seta45Graus, POSICAO_SETA_45_GRAUS_X, POSICAO_SETAS_Y);
+            batch.draw(seta90Graus, POSICAO_SETA_90_GRAUS_X, POSICAO_SETAS_Y);
+            batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
+        }
         
         if (fimAnimacaoInicial) {
             
@@ -129,10 +135,14 @@ public class Game extends ApplicationAdapter {
 
             else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            }     
+            }           
 
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
+            }
+            
+            else {
+                heroi.parado();
             }
             
             // Evento de armadilha da pedra
@@ -154,6 +164,8 @@ public class Game extends ApplicationAdapter {
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
                 princesa.animacaoFinal();
         }
+        else
+            batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
         
         camera.update();
         
@@ -188,7 +200,7 @@ public class Game extends ApplicationAdapter {
                             @Override
                             public void run() {
                                 // Realiza o efeito das setas "piscando" na tela
-                                aparecerSetas = !aparecerSetas;
+                                animacaoMostrarObjetivo = !animacaoMostrarObjetivo;
                             }
         };        
         Timer.schedule(mostrarObjetivo, 0, 0.5f, 6);      
