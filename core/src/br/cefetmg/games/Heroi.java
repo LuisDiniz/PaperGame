@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Heroi {
     
-    private final static int VELOCIDADE_HEROI_X = 5;
+    private final static int VELOCIDADE_HEROI_X = 6;
     private final static int VELOCIDADE_HEROI_Y = 5;
     
     private Sprite spriteHeroi;
@@ -30,14 +30,7 @@ public class Heroi {
         texturaHeroi = new Texture("Heroi.png");
         spriteHeroi = new Sprite(texturaHeroi);
         spriteSheet = new Texture("spritesheet-pulo.png");
-        quadrosAnimacao = TextureRegion.split(spriteSheet, 109, 226);
-        
-        // Define as animações
-        animacaoPular = new Animation(0.3f, new TextureRegion[] {
-          quadrosAnimacao[0][0],
-          quadrosAnimacao[0][1]
-        });
-        //animacaoPular.setPlayMode(Animation.PlayMode.LOOP);
+        quadrosAnimacao = TextureRegion.split(spriteSheet, 109, 226);      
         
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0] // 1ª linha, 1ª coluna
@@ -50,6 +43,17 @@ public class Heroi {
           //quadrosAnimacao[0][1] // idem, 2ª coluna
         });
         animacaoAndarDireita.setPlayMode(Animation.PlayMode.LOOP);
+        
+        animacaoAbaixar = new Animation(0.3f, new TextureRegion[] {
+          quadrosAnimacao[0][0] // 1ª linha, 1ª coluna
+          //quadrosAnimacao[0][1] // idem, 2ª coluna
+        });
+        
+                // Define as animações
+        animacaoPular = new Animation(0.3f, new TextureRegion[] {
+          quadrosAnimacao[0][0],
+          quadrosAnimacao[0][1]
+        });
         
         animacaoCorrente = animacaoAndarEsquerda;
                 
