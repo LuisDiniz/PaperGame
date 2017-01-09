@@ -13,15 +13,15 @@ public class Heroi {
     private final static int VELOCIDADE_HEROI_Y = 5;
     
     private Sprite spriteHeroi;
-    private Texture texturaHeroi;
+    private final Texture texturaHeroi;
     private Texture spriteSheetPular;
     private Texture spriteSheetAbaixar;
     
     private Animation animacaoCorrente;
-    private Animation animacaoAndarEsquerda;
-    private Animation animacaoAndarDireita;
-    private Animation animacaoPular;
-    private Animation animacaoAbaixar;
+    private final Animation animacaoAndarEsquerda;
+    private final Animation animacaoAndarDireita;
+    private final Animation animacaoPular;
+    private final Animation animacaoAbaixar;
     
     private TextureRegion[][] quadrosAnimacaoPular;
     private TextureRegion[][] quadrosAnimacaoAbaixar;
@@ -103,7 +103,8 @@ public class Heroi {
     }
 
     public float getWidth() {
-        return spriteHeroi.getWidth();
+        TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(0);        
+        return currentFrame.getRegionWidth();
     }
     
 }
