@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  *
@@ -27,10 +28,12 @@ public class Princesa {
     
     private int x;
     private int y;
+    public final Rectangle hitbox;
     
     public Princesa(int x, int y){
         this.x = x;
         this.y = y;
+        hitbox = new Rectangle(x+7, y+18, 98, 197);
         
         spriteSheetPrincesa = new Texture("spritesheetPrincesa.png");
         quadrosAnimacao = TextureRegion.split(spriteSheetPrincesa, 109, 226); 

@@ -1,12 +1,16 @@
 package br.cefetmg.games;
 
+import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Timer;
 
 public class Game extends ApplicationAdapter {
@@ -57,7 +61,7 @@ public class Game extends ApplicationAdapter {
         comecoFase = true;
         fimAnimacaoInicial = false;
         
-        //fimAnimacaoInicial = true; // DEBUG
+        fimAnimacaoInicial = true; // DEBUG
         
         // Carrega as texturas 
         mapa = new Texture("Mapa.png");
@@ -73,7 +77,7 @@ public class Game extends ApplicationAdapter {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         
-        //camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
+        camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
         
         camera.update();   
     }
@@ -162,7 +166,7 @@ public class Game extends ApplicationAdapter {
 
             // Definir Local ou Quando ativar a animação final da princesa
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
-                princesa.animacaoFinal();
+                princesa.animacaoFinal();                                               
         }
         else
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
@@ -209,7 +213,7 @@ public class Game extends ApplicationAdapter {
     private void animacaoInicial() {
         mostrarObjetivo();
         moverCamera(heroi.getX(), 0);
-        comecoFase = false;
+comecoFase = false;
     }
         
 }
