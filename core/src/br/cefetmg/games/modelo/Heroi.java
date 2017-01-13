@@ -1,4 +1,4 @@
-package br.cefetmg.games;
+package br.cefetmg.games.modelo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Heroi {
     
-    private final static int VELOCIDADE_HEROI_X = 6;
+    private final static int VELOCIDADE_HEROI_X = 5;
     private final static int VELOCIDADE_HEROI_Y = 5;
     
     private Sprite spriteHeroi;
@@ -106,7 +106,7 @@ public class Heroi {
         return y;
     }
 
-    void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch) {
         //batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height); Desenha o retangulo da Hitbox no heroi
         
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();

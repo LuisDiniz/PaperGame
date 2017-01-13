@@ -1,4 +1,4 @@
-package br.cefetmg.games;
+package br.cefetmg.games.modelo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -6,17 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Pedra {
+public class Pedra extends BaseArmadilha{
     
-    private static final int VELOCIDADE_PEDRA = 2;
+    private static final int VELOCIDADE_PEDRA = 5;
     
-    private final Texture spriteSheetPedra = new Texture("PedraSpritesheet.png");
+    private final Texture spriteSheetPedra = new Texture("PedraSpritesheet3.png");
     
     private final TextureRegion[][] quadrosAnimacao;
     private final Animation animacaoPedra;
     
-    private float x;
-    private float y;
     private float fimAnimacaoX;
     private boolean visivel;
     float tempoAnimacao;
@@ -25,7 +23,7 @@ public class Pedra {
         this.x = 0;
         this.y = 0;
         visivel = false;
-        quadrosAnimacao = TextureRegion.split(spriteSheetPedra, 459, 226);
+        quadrosAnimacao = TextureRegion.split(spriteSheetPedra, 235, 240);
         // Define as animações
         animacaoPedra = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0],
@@ -34,15 +32,7 @@ public class Pedra {
           quadrosAnimacao[0][3],
         });
         animacaoPedra.setPlayMode(Animation.PlayMode.LOOP);         
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }  
+    } 
 
     public boolean isVisivel() {
         return visivel;
@@ -52,7 +42,7 @@ public class Pedra {
         this.visivel = visivel;
     }  
     
-    public void ativarArmadilha(float x, float y, float larguraCamera){
+    public void ativarArmadilha(int x, int y, float larguraCamera){
         this.x = x;//- larguraCamera / 2f;
         this.y = y;
         fimAnimacaoX = 0;//this.x - larguraCamera;
