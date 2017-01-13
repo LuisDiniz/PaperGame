@@ -171,7 +171,7 @@ public class Game extends ApplicationAdapter {
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
         
         camera.update();
-        
+        heroi.update();
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
