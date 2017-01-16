@@ -129,7 +129,7 @@ public class Heroi {
     }
 
     public void render(SpriteBatch batch) {
-        //batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height); //Desenha o retangulo da Hitbox no heroi
+        batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height); //Desenha o retangulo da Hitbox no heroi
         
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(tempoAnimacao);
