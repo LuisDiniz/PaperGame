@@ -28,7 +28,7 @@ public class Heroi {
     private TextureRegion[][] quadrosAnimacaoPular;
     private TextureRegion[][] quadrosAnimacaoAbaixar;
     private int x,y, velocidadeY;
-    float tempoAnimacao;
+    private float tempoAnimacao;
     public Rectangle hitbox;
     
     public Heroi(int x, int y){
@@ -73,33 +73,45 @@ public class Heroi {
         hitbox.x = x+27;
         hitbox.y = y+10;
         y = y + velocidadeY;
-        if (velocidadeY < 0 && hitbox.y <= Chao.getFloorHeight(hitbox.x))
+        if (velocidadeY < 0 && hitbox.y <= Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
         {
             velocidadeY = 0;
-            hitbox.y = Chao.getFloorHeight(hitbox.x);
-            y = Chao.getFloorHeight(hitbox.x)-10;
+            hitbox.y = Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width);
+            y = Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width)-10;
         }
-        else if (hitbox.y > Chao.getFloorHeight(hitbox.x))
+        else if (hitbox.y > Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
             velocidadeY = velocidadeY - 1;
     }
-    public void andarDireita(){
-        animacaoCorrente = animacaoAndarDireita; 
-        x = x + VELOCIDADE_HEROI_X;
+    public boolean andarDireita(){
+        animacaoCorrente = animacaoAndarDireita;
+        float deltaAltura = Chao.getFloorHeight(hitbox.x+hitbox.width+5) - hitbox.y;
+        if ( deltaAltura <= 0) {
+            x = x + VELOCIDADE_HEROI_X;
+            return true;
+        }
+        return false;
     }
     
-    public void andarEsquerda(){
+    public boolean andarEsquerda(){
         animacaoCorrente = animacaoAndarEsquerda;
-        x = x - VELOCIDADE_HEROI_X;
+        float deltaAltura = Chao.getFloorHeight(hitbox.x-5) - hitbox.y;
+        if ( deltaAltura <= 0) {
+            x = x - VELOCIDADE_HEROI_X;
+            return true;
+        }
+        return false;
     }
     
     public void pular(){
         animacaoCorrente = animacaoPular;
-        if (hitbox.y == Chao.getFloorHeight(hitbox.x))
+        if (hitbox.y == Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
             velocidadeY = VELOCIDADE_HEROI_Y;
     }
     
     public void abaixar(){
+
         animacaoCorrente = animacaoAbaixar;
+        hitbox.height = 120;
     }
     
     public void parado(){
@@ -116,7 +128,7 @@ public class Heroi {
         return y;
     }
 
-    void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch) {
         //batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height); //Desenha o retangulo da Hitbox no heroi
         
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();

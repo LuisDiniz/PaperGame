@@ -48,7 +48,8 @@ public class Game extends ApplicationAdapter {
     // Variáveis de Controle
     private boolean comecoFase;
     private boolean animacaoMostrarObjetivo;
-    private boolean fimAnimacaoInicial;	
+    private boolean fimAnimacaoInicial;
+    private boolean isAgachado;
     private int contador;
     private int numeroRepeticoes;
         
@@ -60,7 +61,7 @@ public class Game extends ApplicationAdapter {
         comecoFase = true;
         fimAnimacaoInicial = false;
         
-        //fimAnimacaoInicial = true; // DEBUG
+        fimAnimacaoInicial = true; // DEBUG
         
         // Carrega as texturas 
         mapa = new Texture("Mapa.png");
@@ -76,7 +77,7 @@ public class Game extends ApplicationAdapter {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         
-        //camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
+        camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
         
         camera.update();   
     }
@@ -119,49 +120,52 @@ public class Game extends ApplicationAdapter {
             batch.draw(seta90Graus, POSICAO_SETA_90_GRAUS_X, POSICAO_SETAS_Y);
             batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
         }
-        
+
         if (fimAnimacaoInicial) {
-            
+            isAgachado = false;
+
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                boolean andou = false;
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
-                    heroi.andarDireita();
-                if (camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) 
+                    andou = heroi.andarDireita();
+                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) && andou)
                     camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
-            }        
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                boolean andou = false;
                 if (heroi.getX() > 0)
-                    heroi.andarEsquerda();
-                if (camera.position.x > camera.viewportWidth/2f)  
+                    andou = heroi.andarEsquerda();
+                if ((camera.position.x > camera.viewportWidth / 2f) && andou)
                     camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
-            }    
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            }           
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
-            }
-            
-            else {
+                isAgachado = true;
+            } else {
                 heroi.parado();
             }
-            
+
             // Evento de armadilha da pedra
-            if (heroi.getX() <= 1000){
+            if (heroi.getX() <= 1000) {
                 pedra = new Pedra();
-                pedra.ativarArmadilha(heroi.getX(), heroi.getY(), camera.viewportWidth);   
+                pedra.ativarArmadilha(heroi.getX(), heroi.getY(), camera.viewportWidth);
             }
-            
-            if (pedra != null && pedra.isVisivel()){            
+
+            if (pedra != null && pedra.isVisivel()) {
                 // Desenha o Goomba
-                pedra.render(batch);   
+                pedra.render(batch);
                 //batch.draw(pedra.getTEXTURA_PEDRA(), pedra.getX(), pedra.getY());
                 // ? Destroi ? o objeto se sua animação tiver chegado ao fim
                 if (!pedra.isVisivel())
                     pedra = null;
             }
+
+            //Deteccao de colisoes
+            if (!isAgachado){
+                heroi.hitbox.height = 175;
+            }
+            /*foreach (armadilha : armadilhas) {
+            }*/
 
             // Definir Local ou Quando ativar a animação final da princesa
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
