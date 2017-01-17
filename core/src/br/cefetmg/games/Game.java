@@ -1,16 +1,21 @@
 package br.cefetmg.games;
 
+import br.cefetmg.games.modelo.BaseArmadilha;
 import br.cefetmg.games.modelo.Princesa;
 import br.cefetmg.games.modelo.Heroi;
 import br.cefetmg.games.modelo.Pedra;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -45,12 +50,18 @@ public class Game extends ApplicationAdapter {
     // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
+    private Timer.Task fimAnimacao;
     // Variáveis de Controle
     private boolean comecoFase;
     private boolean animacaoMostrarObjetivo;
     private boolean fimAnimacaoInicial;	
-    private int contador;
-    private int numeroRepeticoes;
+    private int limiteCameraEsquerda;
+    private int limiteCameraDireita;
+    private List<BaseArmadilha> armadilhas;
+    // DEBUG
+    private boolean debug = true;
+    private BitmapFont font;
+    private float posicaoFontX;
         
     @Override
     public void create () {
@@ -58,10 +69,10 @@ public class Game extends ApplicationAdapter {
         // Inicializa variáveis de controle;
         animacaoMostrarObjetivo = true;
         comecoFase = true;
-        fimAnimacaoInicial = false;
-        
-        //fimAnimacaoInicial = true; // DEBUG
-        
+        if (debug)
+            fimAnimacaoInicial = true;
+        else
+            fimAnimacaoInicial = false;
         // Carrega as texturas 
         mapa = new Texture("Mapa.png");
         labelPrincesa = new Texture("LabelPrincesa.png");
@@ -74,11 +85,18 @@ public class Game extends ApplicationAdapter {
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
         // Inicializa a câmera com o tamanho da tela
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        
-        //camera.position.set(heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f), camera.viewportHeight / 2f, 0); // DEBUG
-        
-        camera.update();   
+        if (debug)
+            camera.position.set(mapa.getWidth() - camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        else
+            camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        camera.update();
+        if (debug){
+            font = new BitmapFont();
+            font.setColor(Color.BLACK);
+            posicaoFontX = camera.position.x + 350;
+        }
+        // Cria array com as armadilhas
+        inicializarArrayArmadilhas();
     }
 
     @Override
@@ -93,6 +111,9 @@ public class Game extends ApplicationAdapter {
         heroi.render(batch);
         princesa.render(batch);               
         batch.draw(caixa, 500, 0, 100, 100);
+        
+        if (debug)
+            desenharVariaveisDebug();
         
         // Desenha a camera 
         batch.setProjectionMatrix(camera.combined); 
@@ -109,15 +130,17 @@ public class Game extends ApplicationAdapter {
     
     public void update(){
         
-        // Realiza a animação inicial do jogo apenas se estiver nos começo da fase
-        if (comecoFase)
-            animacaoInicial();
-        
-        if (animacaoMostrarObjetivo){
-            //batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
-            batch.draw(seta45Graus, POSICAO_SETA_45_GRAUS_X, POSICAO_SETAS_Y);
-            batch.draw(seta90Graus, POSICAO_SETA_90_GRAUS_X, POSICAO_SETAS_Y);
-            batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
+        if (!debug){
+            // Realiza a animação inicial do jogo apenas se estiver nos começo da fase
+            if (comecoFase)
+                animacaoInicial();
+
+            if (animacaoMostrarObjetivo){
+                //batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
+                batch.draw(seta45Graus, POSICAO_SETA_45_GRAUS_X, POSICAO_SETAS_Y);
+                batch.draw(seta90Graus, POSICAO_SETA_90_GRAUS_X, POSICAO_SETAS_Y);
+                batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
+            }
         }
         
         if (fimAnimacaoInicial) {
@@ -148,21 +171,11 @@ public class Game extends ApplicationAdapter {
                 heroi.parado();
             }
             
-            // Evento de armadilha da pedra
-            if (heroi.getX() <= 1000){
-                pedra = new Pedra();
-                pedra.ativarArmadilha(heroi.getX(), heroi.getY(), camera.viewportWidth);   
-            }
+            limiteCameraEsquerda = (int) (camera.position.x - camera.viewportWidth / 2f);
+            limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
             
-            if (pedra != null && pedra.isVisivel()){            
-                // Desenha o Goomba
-                pedra.render(batch);   
-                //batch.draw(pedra.getTEXTURA_PEDRA(), pedra.getX(), pedra.getY());
-                // ? Destroi ? o objeto se sua animação tiver chegado ao fim
-                if (!pedra.isVisivel())
-                    pedra = null;
-            }
-
+            verificarDisparoArmadilha();
+            
             // Definir Local ou Quando ativar a animação final da princesa
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
                 princesa.animacaoFinal();                                               
@@ -170,28 +183,36 @@ public class Game extends ApplicationAdapter {
         else
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
         
+        if (debug)
+            posicaoFontX = camera.position.x + 350;
+        
         camera.update();
         
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
         
-        numeroRepeticoes = (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2);
-        contador = 0;
+        float delay = 3f;
+        float velocidadeAnimacaoMoverCamera = 0.05f;
+        int numRepeticoes = (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2);
+        
         
         moverCamera = new Timer.Task(){ 
                         @Override
-                         public void run() { 
-                             if (contador < numeroRepeticoes){
-                                camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
-                                contador++;
-                             }
-                             else
-                                 fimAnimacaoInicial = true;
-                         }
-        };        
+                        public void run() { 
+                            camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
+                        }
+        };
+        
+        fimAnimacao = new Timer.Task(){ 
+                        @Override
+                        public void run() { 
+                            fimAnimacaoInicial = true;
+                        }
+        }; 
         // Arrumar cálculo da câmera
-        Timer.schedule(moverCamera, 3f, 0.05f, numeroRepeticoes);
+        Timer.schedule(moverCamera, delay, velocidadeAnimacaoMoverCamera, (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2));
+        Timer.schedule(fimAnimacao, delay+(velocidadeAnimacaoMoverCamera*numRepeticoes));
     }
 
     private void mostrarObjetivo(){
@@ -213,6 +234,37 @@ public class Game extends ApplicationAdapter {
         mostrarObjetivo();
         moverCamera(heroi.getX(), 0);
         comecoFase = false;
+    }
+
+    private void inicializarArrayArmadilhas() {
+        armadilhas = new ArrayList<BaseArmadilha>();
+        armadilhas.add(new Pedra(1000, 0, false));
+        //armadilhas.append(new Pedra(1000,0));
+    }
+
+    private void verificarDisparoArmadilha() {
+        for (BaseArmadilha armadilha: armadilhas){
+            if (armadilha.isAtiva()){
+                if ( (armadilha.getX() >= limiteCameraEsquerda) && (!armadilha.isVisivel()) ){
+                    armadilha.ativarArmadilha();
+                }
+                if (armadilha.isVisivel()){
+                    if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita))
+                        armadilha.render(batch);
+                    else{
+                        armadilha.setVisivel(false);
+                        armadilha.setAtiva(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void desenharVariaveisDebug() {
+        font.draw(batch, "Camera.x: "+camera.position.x, posicaoFontX, 300);
+        font.draw(batch, "Limite Esquerda: "+limiteCameraEsquerda, posicaoFontX, 320);
+        font.draw(batch, "Limite Direito: "+limiteCameraDireita, posicaoFontX, 340);
+        font.draw(batch, "Heroi.x: "+heroi.getX(), posicaoFontX, 360);
     }
         
 }
