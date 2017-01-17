@@ -4,6 +4,8 @@ import br.cefetmg.games.modelo.BaseArmadilha;
 import br.cefetmg.games.modelo.Princesa;
 import br.cefetmg.games.modelo.Heroi;
 import br.cefetmg.games.modelo.Pedra;
+import br.cefetmg.games.modelo.inimigos.BaseInimigo;
+import br.cefetmg.games.modelo.inimigos.Medusa;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -39,7 +43,7 @@ public class Game extends ApplicationAdapter {
     private Texture seta90Graus;
     private Texture seta135Graus;
     
-    
+    private Texture texturaMedusa;
     private Texture caixa;
             
             
@@ -47,6 +51,7 @@ public class Game extends ApplicationAdapter {
     private Heroi heroi;
     private Princesa princesa;
     private Pedra pedra;
+    private ArrayList<BaseInimigo> inimigos;
     // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
@@ -58,6 +63,7 @@ public class Game extends ApplicationAdapter {
     private int limiteCameraEsquerda;
     private int limiteCameraDireita;
     private List<BaseArmadilha> armadilhas;
+    private boolean isAgachado;
     // DEBUG
     private boolean debug = true;
     private BitmapFont font;
@@ -80,6 +86,7 @@ public class Game extends ApplicationAdapter {
         seta45Graus = new Texture("Seta45Graus.png");
         seta90Graus = new Texture("Seta90Graus.png");
         seta135Graus = new Texture("Seta135Graus.png");
+        texturaMedusa = new Texture("Medusa.png");
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -95,6 +102,7 @@ public class Game extends ApplicationAdapter {
             font.setColor(Color.BLACK);
             posicaoFontX = camera.position.x + 350;
         }
+        inimigos = new ArrayList<BaseInimigo>();
         // Cria array com as armadilhas
         inicializarArrayArmadilhas();
     }
@@ -111,6 +119,7 @@ public class Game extends ApplicationAdapter {
         heroi.render(batch);
         princesa.render(batch);               
         batch.draw(caixa, 500, 0, 100, 100);
+        if (!inimigos.isEmpty()) inimigos.get(0).render(batch);
         
         if (debug)
             desenharVariaveisDebug();
@@ -142,32 +151,30 @@ public class Game extends ApplicationAdapter {
                 batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
             }
         }
-        
+
         if (fimAnimacaoInicial) {
-            
+            isAgachado = false;
+
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                boolean andou = false;
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
-                    heroi.andarDireita();
-                if (camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) 
-                    camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
-            }        
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                    andou = heroi.andarDireita();
+                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) && andou)
+                    if (camera.position.x <= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
+                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                boolean andou = false;
                 if (heroi.getX() > 0)
-                    heroi.andarEsquerda();
-                if (camera.position.x > camera.viewportWidth/2f)  
-                    camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
-            }    
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                    andou = heroi.andarEsquerda();
+                if ((camera.position.x > camera.viewportWidth / 2f) && andou)
+                    if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
+                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            }           
-
-            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
-            }
-            
-            else {
+                isAgachado = true;
+            } else {
                 heroi.parado();
             }
             
@@ -176,6 +183,15 @@ public class Game extends ApplicationAdapter {
             
             verificarDisparoArmadilha();
             
+            //Cria inimigos
+            if (inimigos.size() < 2)
+                inimigos.add( new Medusa(camera.position.x, texturaMedusa));
+
+            //Deteccao de colisoes
+            if (!isAgachado){
+                heroi.hitbox.height = 175;
+            }
+
             // Definir Local ou Quando ativar a animação final da princesa
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
                 princesa.animacaoFinal();                                               
@@ -187,7 +203,7 @@ public class Game extends ApplicationAdapter {
             posicaoFontX = camera.position.x + 350;
         
         camera.update();
-        
+        heroi.update();
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
