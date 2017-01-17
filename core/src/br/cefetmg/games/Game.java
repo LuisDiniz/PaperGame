@@ -65,7 +65,7 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = true;
+    private boolean debug = false;
     private BitmapFont font;
     private float posicaoFontX;
         
@@ -116,7 +116,7 @@ public class Game extends ApplicationAdapter {
         
         batch.draw(mapa, 0, 0);
         
-        heroi.render(batch);
+        heroi.render(batch, debug);
         princesa.render(batch);               
         batch.draw(caixa, 500, 0, 100, 100);
         if (!inimigos.isEmpty()) inimigos.get(0).render(batch);
@@ -211,8 +211,7 @@ public class Game extends ApplicationAdapter {
         float delay = 3f;
         float velocidadeAnimacaoMoverCamera = 0.05f;
         int numRepeticoes = (int) Math.floor((destinoX - (camera.viewportWidth/2) - camera.position.x + 109)/VELOCIDADE_CAMERA_X - 2);
-        
-        
+                
         moverCamera = new Timer.Task(){ 
                         @Override
                         public void run() { 
