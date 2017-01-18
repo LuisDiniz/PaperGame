@@ -63,7 +63,7 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = true;
+    private boolean debug = false;
     private BitmapFont font;
     private float posicaoFontX;
     private float armadilhaX;

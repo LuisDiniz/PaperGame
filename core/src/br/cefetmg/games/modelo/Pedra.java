@@ -20,8 +20,8 @@ public class Pedra extends BaseArmadilha{
            this.direcao = 1;
         else 
            this.direcao = -1;
-        spriteSheet = new Texture("PedraSpritesheet3.png");
-        quadrosAnimacao = TextureRegion.split(spriteSheet, 235, 240);
+        spriteSheet = new Texture("spritesheetPedra.png");
+        quadrosAnimacao = TextureRegion.split(spriteSheet, 230, 232);
         // Define as animações
         animacao = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0],
