@@ -12,6 +12,7 @@ public class Heroi {
     
     private final static int VELOCIDADE_HEROI_X = 5;
     private final static int VELOCIDADE_HEROI_Y = 20;
+    private int HP;
     
     private Sprite spriteHeroi;
     private final Texture texturaHeroi;
@@ -35,6 +36,7 @@ public class Heroi {
         // Guarda a posição inicial do heroi                 
         this.x = x;
         this.y = y;
+        HP = 3;
         hitbox = new Rectangle(x+27, y+10, 56, 175);
         // Carrega as texturas e animações
         texturaHeroi = new Texture("Heroi.png");
@@ -68,20 +70,20 @@ public class Heroi {
         animacaoCorrente = animacaoAndarEsquerda;
     }
     
-    public void update ()
-    {
+    public void update (){
         hitbox.x = x+27;
         hitbox.y = y+10;
         y = y + velocidadeY;
-        if (velocidadeY < 0 && hitbox.y <= Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
-        {
+        if (velocidadeY < 0 && hitbox.y <= Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width)){
             velocidadeY = 0;
             hitbox.y = Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width);
             y = Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width)-10;
         }
-        else if (hitbox.y > Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
+        else if (hitbox.y > Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width)){
             velocidadeY = velocidadeY - 1;
+        }
     }
+    
     public boolean andarDireita(){
         animacaoCorrente = animacaoAndarDireita;
         float deltaAltura = Chao.getFloorHeight(hitbox.x+hitbox.width+5) - hitbox.y;
@@ -109,7 +111,6 @@ public class Heroi {
     }
     
     public void abaixar(){
-
         animacaoCorrente = animacaoAbaixar;
         hitbox.height = 120;
     }
@@ -129,9 +130,9 @@ public class Heroi {
     }
 
     public void render(SpriteBatch batch, boolean debug) {
+        //Desenha o retangulo da Hitbox no heroi
         if (debug)
-            batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height); //Desenha o retangulo da Hitbox no heroi
-        
+            batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height);        
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(tempoAnimacao);
         batch.draw(currentFrame,x,y);
@@ -140,6 +141,14 @@ public class Heroi {
     public float getWidth() {
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(0);        
         return currentFrame.getRegionWidth();
+    }
+    
+    public int getHP(){
+        return HP;
+    }
+    
+    public void perdeuVida(){
+        HP = HP - 1;
     }
     
 }

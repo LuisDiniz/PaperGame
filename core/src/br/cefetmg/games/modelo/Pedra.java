@@ -8,11 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Pedra extends BaseArmadilha{
     
-    private static final int VELOCIDADE_PEDRA = 5;
-    
+    private static final int VELOCIDADE_PEDRA = 5;    
     private int direcao;
-    
-    private float fimAnimacaoX;
     
     public Pedra(int PosX, int PosY, boolean direita){
         x = PosX;
@@ -35,18 +32,8 @@ public class Pedra extends BaseArmadilha{
         animacao.setPlayMode(Animation.PlayMode.LOOP);         
     } 
     
-//    public void ativarArmadilha(int x, int y, float larguraCamera){
-//        this.x = x;//- larguraCamera / 2f;
-//        this.y = y;
-//        fimAnimacaoX = 0;//this.x - larguraCamera;
-//        visivel = true;
-//    }
-    
     private void atualizarPosicaoPedra(){
-//        if (x >= this.fimAnimacaoX)
-            x = x - (this.VELOCIDADE_PEDRA * direcao);
-//        else
-//            visivel = false;
+        x = x - (this.VELOCIDADE_PEDRA * direcao);
     }
     
     @Override

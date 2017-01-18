@@ -19,8 +19,6 @@ import com.badlogic.gdx.utils.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-
 public class Game extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;      
@@ -65,9 +63,10 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = false;
+    private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
+    private float armadilhaX;
         
     @Override
     public void create () {
@@ -101,6 +100,7 @@ public class Game extends ApplicationAdapter {
             font = new BitmapFont();
             font.setColor(Color.BLACK);
             posicaoFontX = camera.position.x + 350;
+            armadilhaX = 0;
         }
         inimigos = new ArrayList<BaseInimigo>();
         // Cria array com as armadilhas
@@ -264,8 +264,12 @@ public class Game extends ApplicationAdapter {
                     armadilha.ativarArmadilha();
                 }
                 if (armadilha.isVisivel()){
-                    if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita))
+                    if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
                         armadilha.render(batch);
+                        armadilhaX = armadilha.getX();
+                        if (verificarColisao(armadilha))
+                                heroi.perdeuVida();
+                    }
                     else{
                         armadilha.setVisivel(false);
                         armadilha.setAtiva(false);
@@ -280,6 +284,15 @@ public class Game extends ApplicationAdapter {
         font.draw(batch, "Limite Esquerda: "+limiteCameraEsquerda, posicaoFontX, 320);
         font.draw(batch, "Limite Direito: "+limiteCameraDireita, posicaoFontX, 340);
         font.draw(batch, "Heroi.x: "+heroi.getX(), posicaoFontX, 360);
+        font.draw(batch, "HP: "+heroi.getHP(), posicaoFontX, 380);
+        font.draw(batch, "Armadilha.x: "+armadilhaX, posicaoFontX, 400);
+    }
+
+    private boolean verificarColisao(BaseArmadilha armadilha) {
+        if (armadilha.getX() >= heroi.getX())
+            return true;
+        else
+            return false;
     }
         
 }
