@@ -11,18 +11,17 @@ public class Pedra extends BaseArmadilha{
     
     private static final int VELOCIDADE_PEDRA = 5;    
     private int direcao;
-    private Texture texturaHitbox;
-    private Rectangle hitbox;
     
-    public Pedra(int PosX, int PosY, boolean direita){
+    public Pedra(int PosX, int PosY, boolean esquerda){
         x = PosX;
         y = PosY;
         visivel = false;
         ativa = true;
-        if (direita)
-           this.direcao = 1;
-        else 
+        colidiu = false;
+        if (esquerda)
            this.direcao = -1;
+        else 
+           this.direcao = 1;
         hitbox = new Rectangle(x, y, 175, 175);
         spriteSheet = new Texture("spritesheetPedra3.png");
         texturaHitbox = new Texture ("TexturaVermelha.png");
@@ -39,7 +38,7 @@ public class Pedra extends BaseArmadilha{
     
     private void atualizarPosicaoPedra(){
         x = x - (this.VELOCIDADE_PEDRA * direcao);
-        hitbox.x = hitbox.x - (this.VELOCIDADE_PEDRA * direcao);//x+27;
+        hitbox.x = hitbox.x - (this.VELOCIDADE_PEDRA * direcao);
     }
     
     @Override
@@ -52,5 +51,5 @@ public class Pedra extends BaseArmadilha{
         batch.draw(currentFrame,x,y);
         atualizarPosicaoPedra();
     }
-           
+               
 }

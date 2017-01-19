@@ -6,6 +6,7 @@ import br.cefetmg.games.modelo.Heroi;
 import br.cefetmg.games.modelo.Pedra;
 import br.cefetmg.games.modelo.inimigos.BaseInimigo;
 import br.cefetmg.games.modelo.inimigos.Medusa;
+import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -253,7 +254,7 @@ public class Game extends ApplicationAdapter {
 
     private void inicializarArrayArmadilhas() {
         armadilhas = new ArrayList<BaseArmadilha>();
-        armadilhas.add(new Pedra(1000, 0, false));
+        armadilhas.add(new Pedra(1000, 0, true));
         //armadilhas.append(new Pedra(1000,0));
     }
 
@@ -267,8 +268,10 @@ public class Game extends ApplicationAdapter {
                     if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
                         armadilha.render(batch,debug);
                         armadilhaX = armadilha.getX();
-                        if (verificarColisao(armadilha))
-                                heroi.perdeuVida();
+                        if (verificarColisao(armadilha)){
+                            heroi.perdeuVida(armadilha);
+                            armadilha.setColidiu(true);
+                        }
                     }
                     else{
                         armadilha.setVisivel(false);
@@ -289,7 +292,8 @@ public class Game extends ApplicationAdapter {
     }
 
     private boolean verificarColisao(BaseArmadilha armadilha) {
-        if (armadilha.getX() >= heroi.getX())
+        Collision verificaColisao = new Collision();
+        if (verificaColisao.rectsOverlap(heroi.getHitbox(),armadilha.getHitbox()) && (!armadilha.getColidiu()))
             return true;
         else
             return false;
