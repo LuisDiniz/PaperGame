@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Pedra extends BaseArmadilha{
     
     private static final int VELOCIDADE_PEDRA = 5;    
     private int direcao;
+    private Texture texturaHitbox;
+    private Rectangle hitbox;
     
     public Pedra(int PosX, int PosY, boolean direita){
         x = PosX;
@@ -20,7 +23,9 @@ public class Pedra extends BaseArmadilha{
            this.direcao = 1;
         else 
            this.direcao = -1;
+        hitbox = new Rectangle(x, y, 175, 175);
         spriteSheet = new Texture("spritesheetPedra3.png");
+        texturaHitbox = new Texture ("TexturaVermelha.png");
         quadrosAnimacao = TextureRegion.split(spriteSheet, 173, 175);
         // Define as animações
         animacao = new Animation(0.3f, new TextureRegion[] {
@@ -34,10 +39,14 @@ public class Pedra extends BaseArmadilha{
     
     private void atualizarPosicaoPedra(){
         x = x - (this.VELOCIDADE_PEDRA * direcao);
+        hitbox.x = hitbox.x - (this.VELOCIDADE_PEDRA * direcao);//x+27;
     }
     
     @Override
-    public void render(SpriteBatch batch){;
+    public void render(SpriteBatch batch, boolean debug){
+        //Desenha o retangulo da Hitbox no heroi
+        if (debug)
+            batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height);                 
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) animacao.getKeyFrame(tempoAnimacao);                       
         batch.draw(currentFrame,x,y);

@@ -159,8 +159,8 @@ public class Game extends ApplicationAdapter {
                 boolean andou = false;
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
                     andou = heroi.andarDireita();
-                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) && andou)
-                    if (camera.position.x <= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
+                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)) && andou)
+                    if (camera.position.x <= heroi.getX() + heroi.getWidth() + (camera.viewportWidth / 2f))
                         camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
             } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 boolean andou = false;
@@ -265,7 +265,7 @@ public class Game extends ApplicationAdapter {
                 }
                 if (armadilha.isVisivel()){
                     if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
-                        armadilha.render(batch);
+                        armadilha.render(batch,debug);
                         armadilhaX = armadilha.getX();
                         if (verificarColisao(armadilha))
                                 heroi.perdeuVida();

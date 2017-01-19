@@ -46,7 +46,7 @@ public abstract class BaseArmadilha {
         this.visivel = true;
     }
     
-    public void render(SpriteBatch batch){
+    public void render(SpriteBatch batch, boolean debug){
         this.tempoAnimacao = this.tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) this.animacao.getKeyFrame(this.tempoAnimacao);                       
         batch.draw(currentFrame, this.x, this.y);
