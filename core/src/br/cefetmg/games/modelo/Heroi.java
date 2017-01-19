@@ -18,15 +18,18 @@ public class Heroi {
     private Texture spriteSheetPular;
     private Texture spriteSheetAbaixar;
     private Texture texturaHitbox;
+    private Texture spriteSheetSocar;
     
     private Animation animacaoCorrente;
     private final Animation animacaoAndarEsquerda;
     private final Animation animacaoAndarDireita;
     private final Animation animacaoPular;
     private final Animation animacaoAbaixar;
+    private final Animation<TextureRegion> animacaoSocar;
     
     private TextureRegion[][] quadrosAnimacaoPular;
     private TextureRegion[][] quadrosAnimacaoAbaixar;
+    private TextureRegion[][] quadrosAnimacaoSocar;
     private int x,y, velocidadeY;
     private float tempoAnimacao;
     public Rectangle hitbox;
@@ -42,8 +45,10 @@ public class Heroi {
         spriteHeroi = new Sprite(texturaHeroi);
         spriteSheetPular = new Texture("spritesheet-pular.png");
         spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
+        spriteSheetSocar = new Texture(Gdx.files.internal("spritesheet-soco.png"));
         quadrosAnimacaoPular = TextureRegion.split(spriteSheetPular, 109, 226);      
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
+        quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth()/2, spriteSheetSocar.getHeight()/1);
         // Define as animações
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPular[0][0]
@@ -63,6 +68,10 @@ public class Heroi {
         animacaoPular = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPular[0][0],
             quadrosAnimacaoPular[0][1]
+        });
+        animacaoSocar = new Animation<TextureRegion>(0.3f, new TextureRegion[]{
+            quadrosAnimacaoSocar[0][0],
+            quadrosAnimacaoSocar[0][1],
         });
         
         animacaoCorrente = animacaoAndarEsquerda;
@@ -113,7 +122,7 @@ public class Heroi {
         animacaoCorrente = animacaoAbaixar;
         hitbox.height = 120;
     }
-    
+
     public void parado(){
         // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??
         // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??
@@ -141,5 +150,8 @@ public class Heroi {
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(0);        
         return currentFrame.getRegionWidth();
     }
-    
+
+    public void socar () {
+        animacaoCorrente = animacaoSocar;
+    }
 }

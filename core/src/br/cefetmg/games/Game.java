@@ -6,6 +6,7 @@ import br.cefetmg.games.modelo.Heroi;
 import br.cefetmg.games.modelo.Pedra;
 import br.cefetmg.games.modelo.inimigos.BaseInimigo;
 import br.cefetmg.games.modelo.inimigos.Medusa;
+import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,9 +18,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -65,7 +65,7 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = false;
+    private boolean debug = true; //false;
     private BitmapFont font;
     private float posicaoFontX;
         
@@ -102,7 +102,7 @@ public class Game extends ApplicationAdapter {
             font.setColor(Color.BLACK);
             posicaoFontX = camera.position.x + 350;
         }
-        inimigos = new ArrayList<BaseInimigo>();
+        inicializarArrayInimigos();
         // Cria array com as armadilhas
         inicializarArrayArmadilhas();
     }
@@ -169,12 +169,16 @@ public class Game extends ApplicationAdapter {
                 if ((camera.position.x > camera.viewportWidth / 2f) && andou)
                     if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
                         camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            } /*else*/ if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            } /*else*/ if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
                 isAgachado = true;
-            } else {
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                heroi.socar();
+            }
+            if (!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
                 heroi.parado();
             }
             
@@ -182,10 +186,10 @@ public class Game extends ApplicationAdapter {
             limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
             
             verificarDisparoArmadilha();
-            
-            //Cria inimigos
-            if (inimigos.size() < 2)
-                inimigos.add( new Medusa(camera.position.x, texturaMedusa));
+
+            //Spawn de inimigos
+            if (inimigos.size() < 1)
+                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){
@@ -204,6 +208,7 @@ public class Game extends ApplicationAdapter {
         
         camera.update();
         heroi.update();
+        updateInimigos();
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
@@ -271,6 +276,23 @@ public class Game extends ApplicationAdapter {
                         armadilha.setAtiva(false);
                     }
                 }
+            }
+        }
+    }
+
+    private void inicializarArrayInimigos () {
+        inimigos = new ArrayList<BaseInimigo>();
+    }
+
+    private void updateInimigos() {
+        for(Iterator<BaseInimigo> i = inimigos.iterator(); i.hasNext(); ) {
+            BaseInimigo temp = i.next();
+            temp.update();
+            if (Collision.rectsOverlap(heroi.hitbox, temp.hitbox))
+            {
+                //diminuir a vida do cabra
+                temp.dispose();
+                i.remove();
             }
         }
     }
