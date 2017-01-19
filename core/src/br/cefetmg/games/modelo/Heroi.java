@@ -85,9 +85,11 @@ public class Heroi {
         });
         
         animacaoEsmagado = new Animation(0.3f, new TextureRegion[] {
+            quadrosAnimacaoPularEsquerda[0][0],
+            quadrosAnimacaoEsmagado[0][1],            
             quadrosAnimacaoEsmagado[0][0],
-            quadrosAnimacaoEsmagado[0][1],          
-            quadrosAnimacaoEsmagado[0][2]                    
+            quadrosAnimacaoEsmagado[0][1],
+            quadrosAnimacaoPularEsquerda[0][0]            
         });        
         
         animacaoCorrente = animacaoAndarEsquerda;
@@ -145,14 +147,12 @@ public class Heroi {
     }
     
     public void parado(){
-        // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??
-        // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??
-        if ((animacaoCorrente == animacaoEsmagado) || (animacaoCorrente.getKeyFrame(tempoAnimacao) != animacaoEsmagado.getKeyFrameIndex(2))){
-            if (esquerda)
-                animacaoCorrente = animacaoAndarEsquerda;
-            else
-                animacaoCorrente = animacaoAndarDireita;
-        }
+        // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??;
+        // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??        
+        if (esquerda)
+            animacaoCorrente = animacaoAndarEsquerda;
+        else
+            animacaoCorrente = animacaoAndarDireita;
     }
 
     public int getX() {
