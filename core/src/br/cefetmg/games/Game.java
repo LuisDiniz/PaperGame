@@ -69,7 +69,6 @@ public class Game extends ApplicationAdapter {
     private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
-    private float armadilhaX;
         
     @Override
     public void create () {
@@ -104,7 +103,6 @@ public class Game extends ApplicationAdapter {
             font = new BitmapFont();
             font.setColor(Color.BLACK);
             posicaoFontX = camera.position.x + 350;
-            armadilhaX = 0;
         }
         inicializarArrayInimigos();
         // Cria array com as armadilhas
@@ -193,7 +191,7 @@ public class Game extends ApplicationAdapter {
                 heroi.abaixar();
                 isAgachado = true;
             }          
-            else {
+            else if (!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
                 heroi.parado();
             }
             
@@ -286,7 +284,6 @@ public class Game extends ApplicationAdapter {
                 if (armadilha.isVisivel()){
                     if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
                         armadilha.render(batch,debug);
-                        armadilhaX = armadilha.getX();
                         if (verificarColisao(armadilha)){
                             heroi.perdeuVida(armadilha);
                             armadilha.setColidiu(true);
@@ -312,6 +309,7 @@ public class Game extends ApplicationAdapter {
             if (Collision.rectsOverlap(heroi.hitbox, temp.hitbox))
             {
                 //diminuir a vida do cabra
+                heroi.perdeuVida();
                 temp.dispose();
                 i.remove();
             }
@@ -324,7 +322,6 @@ public class Game extends ApplicationAdapter {
         font.draw(batch, "Limite Direito: "+limiteCameraDireita, posicaoFontX, 340);
         font.draw(batch, "Heroi.x: "+heroi.getX(), posicaoFontX, 360);
         font.draw(batch, "HP: "+heroi.getHP(), posicaoFontX, 380);
-        font.draw(batch, "Armadilha.x: "+armadilhaX, posicaoFontX, 400);
     }
 
     private boolean verificarColisao(BaseArmadilha armadilha) {

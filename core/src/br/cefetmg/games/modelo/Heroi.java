@@ -60,12 +60,12 @@ public class Heroi {
         spriteSheetPularDireita = new Texture("spritesheet-pular-dir.png");
         spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
         spriteSheetEsmagado = new Texture("spritesheetEsmagado.png");
+        spriteSheetSocar = new Texture("Soco.png");
         quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);      
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
-        quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);                      
-        spriteSheetSocar = new Texture(Gdx.files.internal("spritesheet-soco.png"));   
+        quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);                         
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
-        quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth()/2, spriteSheetSocar.getHeight()/1);
+        quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth(), spriteSheetSocar.getHeight());
         // Define as animações
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularEsquerda[0][0]
@@ -86,9 +86,9 @@ public class Heroi {
             quadrosAnimacaoPularEsquerda[0][0],
             quadrosAnimacaoPularEsquerda[0][1]
         });
-        animacaoSocar = new Animation<TextureRegion>(0.3f, new TextureRegion[]{
-            quadrosAnimacaoSocar[0][0],
-            quadrosAnimacaoSocar[0][1],
+        
+        animacaoSocar = new Animation(0.3f, new TextureRegion[] {
+            quadrosAnimacaoSocar[0][0]
         });
         
         animacaoPularDireita = new Animation(0.3f, new TextureRegion[] {
@@ -205,6 +205,10 @@ public class Heroi {
     
     public int getHP(){
         return HP;
+    }
+    
+    public void perdeuVida(){
+        perdeuVida(null);
     }
     
     public void perdeuVida(BaseArmadilha armadilha){
