@@ -22,10 +22,10 @@ public class Pedra extends BaseArmadilha{
            this.direcao = -1;
         else 
            this.direcao = 1;
-        hitbox = new Rectangle(x, y, 175, 175);
-        spriteSheet = new Texture("spritesheetPedra3.png");
+        spriteSheet = new Texture("spritesheetPedra4.png");
+        quadrosAnimacao = TextureRegion.split(spriteSheet, (int) (spriteSheet.getWidth()/4f), spriteSheet.getHeight());
         texturaHitbox = new Texture ("TexturaVermelha.png");
-        quadrosAnimacao = TextureRegion.split(spriteSheet, 173, 175);
+        hitbox = new Rectangle(x, y, (int) (spriteSheet.getWidth()/4f), spriteSheet.getHeight());
         // Define as animações
         animacao = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0],

@@ -27,7 +27,7 @@ public class Game extends ApplicationAdapter {
     private final static int OBJETIVO_POS_X = 100;
     private final static int OBJETIVO_POS_Y = 0;
     private final static int VELOCIDADE_CAMERA_X = 5;
-    private final static int POSICAO_INICIAL_HEROI_X = 2900;
+    private final static int POSICAO_INICIAL_HEROI_X = 2800;
     private final static int POSICAO_INICIAL_HEROI_Y = 11;
     private final static int POSICAO_SETA_45_GRAUS_X = 75;
     private final static int POSICAO_SETA_90_GRAUS_X = 155;
@@ -59,6 +59,7 @@ public class Game extends ApplicationAdapter {
     private boolean comecoFase;
     private boolean animacaoMostrarObjetivo;
     private boolean fimAnimacaoInicial;	
+    private float distanciaHeroiTela;
     private int limiteCameraEsquerda;
     private int limiteCameraDireita;
     private List<BaseArmadilha> armadilhas;
@@ -97,6 +98,7 @@ public class Game extends ApplicationAdapter {
         else
             camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
+        distanciaHeroiTela = mapa.getWidth() - POSICAO_INICIAL_HEROI_X;
         if (debug){
             font = new BitmapFont();
             font.setColor(Color.BLACK);
@@ -155,27 +157,39 @@ public class Game extends ApplicationAdapter {
 
         if (fimAnimacaoInicial) {
             isAgachado = false;
-
+            
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                heroi.pular();
+            } 
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 boolean andou = false;
+                 // Movimenta a câmera
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                    (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
+                    (camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)))
+                    if (camera.position.x <= heroi.getX() + heroi.getWidth() + (camera.viewportWidth / 2f))
+                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;      
+                // Movimenta o Heroi
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
                     andou = heroi.andarDireita();
-                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)) && andou)
-                    if (camera.position.x <= heroi.getX() + heroi.getWidth() + (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            } 
+            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 boolean andou = false;
-                if (heroi.getX() > 0)
-                    andou = heroi.andarEsquerda();
-                if ((camera.position.x > camera.viewportWidth / 2f) && andou)
+                // Movimenta a câmera
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                    (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
+                    (camera.position.x > camera.viewportWidth / 2f))
                     if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                heroi.pular();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;                  
+                // Movimenta o Heroi
+                if (heroi.getX() > 0)
+                    andou = heroi.andarEsquerda();              
+            } 
+            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
                 isAgachado = true;
-            } else {
+            } 
+            else {
                 heroi.parado();
             }
             
