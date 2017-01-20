@@ -28,7 +28,7 @@ public class Game extends ApplicationAdapter {
     private final static int OBJETIVO_POS_X = 100;
     private final static int OBJETIVO_POS_Y = 0;
     private final static int VELOCIDADE_CAMERA_X = 5;
-    private final static int POSICAO_INICIAL_HEROI_X = 2900;
+    private final static int POSICAO_INICIAL_HEROI_X = 2800;
     private final static int POSICAO_INICIAL_HEROI_Y = 11;
     private final static int POSICAO_SETA_45_GRAUS_X = 75;
     private final static int POSICAO_SETA_90_GRAUS_X = 155;
@@ -60,14 +60,16 @@ public class Game extends ApplicationAdapter {
     private boolean comecoFase;
     private boolean animacaoMostrarObjetivo;
     private boolean fimAnimacaoInicial;	
+    private float distanciaHeroiTela;
     private int limiteCameraEsquerda;
     private int limiteCameraDireita;
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = true; //false;
+    private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
+    private float armadilhaX;
         
     @Override
     public void create () {
@@ -97,10 +99,12 @@ public class Game extends ApplicationAdapter {
         else
             camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
+        distanciaHeroiTela = mapa.getWidth() - POSICAO_INICIAL_HEROI_X;
         if (debug){
             font = new BitmapFont();
             font.setColor(Color.BLACK);
             posicaoFontX = camera.position.x + 350;
+            armadilhaX = 0;
         }
         inicializarArrayInimigos();
         // Cria array com as armadilhas
@@ -154,31 +158,42 @@ public class Game extends ApplicationAdapter {
 
         if (fimAnimacaoInicial) {
             isAgachado = false;
-
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                boolean andou = false;
-                if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
-                    andou = heroi.andarDireita();
-                if ((camera.position.x <= (mapa.getWidth() - camera.viewportWidth)) && andou)
-                    if (camera.position.x <= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                boolean andou = false;
-                if (heroi.getX() > 0)
-                    andou = heroi.andarEsquerda();
-                if ((camera.position.x > camera.viewportWidth / 2f) && andou)
-                    if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
-            } /*else*/ if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            } /*else*/ if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                heroi.abaixar();
-                isAgachado = true;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
                 heroi.socar();
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
+            }          
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                boolean andou = false;
+                 // Movimenta a câmera
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                    (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
+                    (camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)))
+                    if (camera.position.x <= heroi.getX() + heroi.getWidth() + (camera.viewportWidth / 2f))
+                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;      
+                // Movimenta o Heroi
+                if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
+                    andou = heroi.andarDireita();
+            } 
+            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                boolean andou = false;
+                // Movimenta a câmera
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                    (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
+                    (camera.position.x > camera.viewportWidth / 2f))
+                    if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
+                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;                  
+                // Movimenta o Heroi
+                if (heroi.getX() > 0)
+                    andou = heroi.andarEsquerda();              
+            } 
+            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                heroi.abaixar();
+                isAgachado = true;
+            }          
+            else {
                 heroi.parado();
             }
             
@@ -258,7 +273,7 @@ public class Game extends ApplicationAdapter {
 
     private void inicializarArrayArmadilhas() {
         armadilhas = new ArrayList<BaseArmadilha>();
-        armadilhas.add(new Pedra(1000, 0, false));
+        armadilhas.add(new Pedra(1000, 0, true));
         //armadilhas.append(new Pedra(1000,0));
     }
 
@@ -269,8 +284,14 @@ public class Game extends ApplicationAdapter {
                     armadilha.ativarArmadilha();
                 }
                 if (armadilha.isVisivel()){
-                    if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita))
-                        armadilha.render(batch);
+                    if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
+                        armadilha.render(batch,debug);
+                        armadilhaX = armadilha.getX();
+                        if (verificarColisao(armadilha)){
+                            heroi.perdeuVida(armadilha);
+                            armadilha.setColidiu(true);
+                        }
+                    }
                     else{
                         armadilha.setVisivel(false);
                         armadilha.setAtiva(false);
@@ -302,6 +323,16 @@ public class Game extends ApplicationAdapter {
         font.draw(batch, "Limite Esquerda: "+limiteCameraEsquerda, posicaoFontX, 320);
         font.draw(batch, "Limite Direito: "+limiteCameraDireita, posicaoFontX, 340);
         font.draw(batch, "Heroi.x: "+heroi.getX(), posicaoFontX, 360);
+        font.draw(batch, "HP: "+heroi.getHP(), posicaoFontX, 380);
+        font.draw(batch, "Armadilha.x: "+armadilhaX, posicaoFontX, 400);
+    }
+
+    private boolean verificarColisao(BaseArmadilha armadilha) {
+        Collision verificaColisao = new Collision();
+        if (verificaColisao.rectsOverlap(heroi.getHitbox(),armadilha.getHitbox()) && (!armadilha.getColidiu()))
+            return true;
+        else
+            return false;
     }
         
 }

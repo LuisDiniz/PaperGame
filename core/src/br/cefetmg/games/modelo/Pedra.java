@@ -5,26 +5,27 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Pedra extends BaseArmadilha{
     
-    private static final int VELOCIDADE_PEDRA = 5;
-    
+    private static final int VELOCIDADE_PEDRA = 5;    
     private int direcao;
     
-    private float fimAnimacaoX;
-    
-    public Pedra(int PosX, int PosY, boolean direita){
+    public Pedra(int PosX, int PosY, boolean esquerda){
         x = PosX;
         y = PosY;
         visivel = false;
         ativa = true;
-        if (direita)
-           this.direcao = 1;
-        else 
+        colidiu = false;
+        if (esquerda)
            this.direcao = -1;
-        spriteSheet = new Texture("PedraSpritesheet3.png");
-        quadrosAnimacao = TextureRegion.split(spriteSheet, 235, 240);
+        else 
+           this.direcao = 1;
+        spriteSheet = new Texture("spritesheetPedra4.png");
+        quadrosAnimacao = TextureRegion.split(spriteSheet, (int) (spriteSheet.getWidth()/4f), spriteSheet.getHeight());
+        texturaHitbox = new Texture ("TexturaVermelha.png");
+        hitbox = new Rectangle(x, y, (int) (spriteSheet.getWidth()/4f), spriteSheet.getHeight());
         // Define as animações
         animacao = new Animation(0.3f, new TextureRegion[] {
           quadrosAnimacao[0][0],
@@ -35,26 +36,20 @@ public class Pedra extends BaseArmadilha{
         animacao.setPlayMode(Animation.PlayMode.LOOP);         
     } 
     
-//    public void ativarArmadilha(int x, int y, float larguraCamera){
-//        this.x = x;//- larguraCamera / 2f;
-//        this.y = y;
-//        fimAnimacaoX = 0;//this.x - larguraCamera;
-//        visivel = true;
-//    }
-    
     private void atualizarPosicaoPedra(){
-//        if (x >= this.fimAnimacaoX)
-            x = x - (this.VELOCIDADE_PEDRA * direcao);
-//        else
-//            visivel = false;
+        x = x - (this.VELOCIDADE_PEDRA * direcao);
+        hitbox.x = hitbox.x - (this.VELOCIDADE_PEDRA * direcao);
     }
     
     @Override
-    public void render(SpriteBatch batch){;
+    public void render(SpriteBatch batch, boolean debug){
+        //Desenha o retangulo da Hitbox no heroi
+        if (debug)
+            batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height);                 
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) animacao.getKeyFrame(tempoAnimacao);                       
         batch.draw(currentFrame,x,y);
         atualizarPosicaoPedra();
     }
-           
+               
 }
