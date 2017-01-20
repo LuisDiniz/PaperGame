@@ -1,6 +1,5 @@
 package br.cefetmg.games.modelo;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -62,10 +61,6 @@ public abstract class BaseArmadilha {
         return hitbox;
     }    
     
-    public void render(SpriteBatch batch, boolean debug){
-        this.tempoAnimacao = this.tempoAnimacao + Gdx.graphics.getDeltaTime();
-        TextureRegion currentFrame = (TextureRegion) this.animacao.getKeyFrame(this.tempoAnimacao);                       
-        batch.draw(currentFrame, this.x, this.y);
-    }    
+    public abstract void render(SpriteBatch batch, boolean debug);  
     
 }
