@@ -23,6 +23,7 @@ public class Heroi {
     private Texture spriteSheetAbaixar;
     private Texture spriteSheetEsmagado;    
     private Texture texturaHitbox;
+    private Texture spriteSheetSocar;
     
     private Animation animacaoCorrente;
     private final Animation animacaoAndarEsquerda;
@@ -31,11 +32,14 @@ public class Heroi {
     private final Animation animacaoPularDireita;
     private final Animation animacaoAbaixar;
     private final Animation animacaoEsmagado;    
+    private final Animation<TextureRegion> animacaoSocar;
     
     private TextureRegion[][] quadrosAnimacaoPularEsquerda;
     private TextureRegion[][] quadrosAnimacaoPularDireita;
     private TextureRegion[][] quadrosAnimacaoAbaixar;
     private TextureRegion[][] quadrosAnimacaoEsmagado;    
+    private TextureRegion[][] quadrosAnimacaoSocar;
+
     private int x,y, velocidadeY;
     private float tempoAnimacao;
     public Rectangle hitbox;
@@ -59,7 +63,9 @@ public class Heroi {
         quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);      
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
         quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);                      
+        spriteSheetSocar = new Texture(Gdx.files.internal("spritesheet-soco.png"));   
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
+        quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth()/2, spriteSheetSocar.getHeight()/1);
         // Define as animações
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularEsquerda[0][0]
@@ -79,6 +85,10 @@ public class Heroi {
         animacaoPularEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularEsquerda[0][0],
             quadrosAnimacaoPularEsquerda[0][1]
+        });
+        animacaoSocar = new Animation<TextureRegion>(0.3f, new TextureRegion[]{
+            quadrosAnimacaoSocar[0][0],
+            quadrosAnimacaoSocar[0][1],
         });
         
         animacaoPularDireita = new Animation(0.3f, new TextureRegion[] {
@@ -153,7 +163,7 @@ public class Heroi {
         animacaoCorrente = animacaoAbaixar;
         hitbox.height = 120;
     }
-    
+
     public void parado(){
         // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??;
         // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??        
@@ -207,4 +217,7 @@ public class Heroi {
         return hitbox;
     }
             
+    public void socar () {
+        animacaoCorrente = animacaoSocar;
+    }
 }

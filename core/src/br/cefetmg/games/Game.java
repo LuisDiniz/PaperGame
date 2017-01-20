@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Game extends ApplicationAdapter {
@@ -105,7 +106,7 @@ public class Game extends ApplicationAdapter {
             posicaoFontX = camera.position.x + 350;
             armadilhaX = 0;
         }
-        inimigos = new ArrayList<BaseInimigo>();
+        inicializarArrayInimigos();
         // Cria array com as armadilhas
         inicializarArrayArmadilhas();
     }
@@ -160,7 +161,10 @@ public class Game extends ApplicationAdapter {
             
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
-            } 
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                heroi.socar();
+            }          
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 boolean andou = false;
                  // Movimenta a câmera
@@ -188,7 +192,7 @@ public class Game extends ApplicationAdapter {
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
                 isAgachado = true;
-            } 
+            }          
             else {
                 heroi.parado();
             }
@@ -197,10 +201,10 @@ public class Game extends ApplicationAdapter {
             limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
             
             verificarDisparoArmadilha();
-            
-            //Cria inimigos
-            if (inimigos.size() < 2)
-                inimigos.add( new Medusa(camera.position.x, texturaMedusa));
+
+            //Spawn de inimigos
+            if (inimigos.size() < 1)
+                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){
@@ -219,6 +223,7 @@ public class Game extends ApplicationAdapter {
         
         camera.update();
         heroi.update();
+        updateInimigos();
     }
         
     public void moverCamera(final int destinoX, final int destinoY){
@@ -292,6 +297,23 @@ public class Game extends ApplicationAdapter {
                         armadilha.setAtiva(false);
                     }
                 }
+            }
+        }
+    }
+
+    private void inicializarArrayInimigos () {
+        inimigos = new ArrayList<BaseInimigo>();
+    }
+
+    private void updateInimigos() {
+        for(Iterator<BaseInimigo> i = inimigos.iterator(); i.hasNext(); ) {
+            BaseInimigo temp = i.next();
+            temp.update();
+            if (Collision.rectsOverlap(heroi.hitbox, temp.hitbox))
+            {
+                //diminuir a vida do cabra
+                temp.dispose();
+                i.remove();
             }
         }
     }

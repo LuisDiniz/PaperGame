@@ -7,10 +7,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 public abstract class BaseInimigo {
     protected float x,y;
-    protected Rectangle hitbox;
+    public Rectangle hitbox;
     protected Texture textura;
     public Sprite sprite;
 
     public abstract void update();
     public abstract void render(SpriteBatch batch);
+    public abstract void dispose();
 }
