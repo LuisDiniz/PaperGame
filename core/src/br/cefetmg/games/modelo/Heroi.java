@@ -12,6 +12,7 @@ public class Heroi {
     
     private final static int VELOCIDADE_HEROI_X = 5;
     private final static int VELOCIDADE_HEROI_Y = 20;
+    private final int POSICAO_INICIAL_HEROI_Y;
     private int HP;
     private boolean esquerda;
     
@@ -43,6 +44,7 @@ public class Heroi {
         // Guarda a posição inicial do heroi                 
         this.x = x;
         this.y = y;
+        POSICAO_INICIAL_HEROI_Y = y;
         HP = 3;
         esquerda = true;
         hitbox = new Rectangle(x+27, y+10, 56, 175);
@@ -110,7 +112,10 @@ public class Heroi {
     }
     
     public boolean andarDireita(){
-        animacaoCorrente = animacaoAndarDireita;
+        if (y == POSICAO_INICIAL_HEROI_Y)
+            animacaoCorrente = animacaoAndarDireita;
+        else
+            animacaoCorrente = animacaoPularDireita;        
         esquerda = false;
         float deltaAltura = Chao.getFloorHeight(hitbox.x+hitbox.width+5) - hitbox.y;
         if ( deltaAltura <= 0) {
@@ -121,7 +126,10 @@ public class Heroi {
     }
     
     public boolean andarEsquerda(){
-        animacaoCorrente = animacaoAndarEsquerda;
+        if (y == POSICAO_INICIAL_HEROI_Y)
+            animacaoCorrente = animacaoAndarEsquerda;
+        else
+            animacaoCorrente = animacaoPularEsquerda;
         esquerda = true;
         float deltaAltura = Chao.getFloorHeight(hitbox.x-5) - hitbox.y;
         if ( deltaAltura <= 0) {
@@ -149,10 +157,18 @@ public class Heroi {
     public void parado(){
         // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??;
         // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??        
-        if (esquerda)
-            animacaoCorrente = animacaoAndarEsquerda;
-        else
-            animacaoCorrente = animacaoAndarDireita;
+        if (esquerda){
+            if (y == POSICAO_INICIAL_HEROI_Y)
+                animacaoCorrente = animacaoAndarEsquerda;
+            else
+                animacaoCorrente = animacaoPularEsquerda;
+        }
+        else{
+            if (y == POSICAO_INICIAL_HEROI_Y)
+                animacaoCorrente = animacaoAndarDireita;
+            else
+                animacaoCorrente = animacaoPularDireita;            
+        }
     }
 
     public int getX() {
