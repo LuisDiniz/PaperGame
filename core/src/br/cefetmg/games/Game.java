@@ -69,7 +69,7 @@ public class Game extends ApplicationAdapter {
     private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
-        
+
     @Override
     public void create () {
         batch = new SpriteBatch();
@@ -161,8 +161,8 @@ public class Game extends ApplicationAdapter {
                 heroi.pular();
             }
             if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                heroi.socar();
-            }          
+                heroi.socar(heroi,inimigos);
+            }
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 boolean andou = false;
                  // Movimenta a câmera
@@ -201,8 +201,8 @@ public class Game extends ApplicationAdapter {
             verificarDisparoArmadilha();
 
             //Spawn de inimigos
-            if (inimigos.size() < 1)
-                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
+//            if (inimigos.size() < 1)
+//                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){

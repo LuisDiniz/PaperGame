@@ -37,7 +37,6 @@ public class Medusa extends BaseInimigo {
     public void dispose() {
         //tocar um som
 //        //mostrar uma animação
-        //this.textura.dispose();
     }
 
     private void makeAMove () {

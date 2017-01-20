@@ -1,5 +1,7 @@
 package br.cefetmg.games.modelo;
 
+import br.cefetmg.games.modelo.inimigos.BaseInimigo;
+import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -7,6 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import org.w3c.dom.css.Rect;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Heroi {
     
@@ -61,9 +67,9 @@ public class Heroi {
         spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
         spriteSheetEsmagado = new Texture("spritesheetEsmagado.png");
         spriteSheetSocar = new Texture("Soco.png");
-        quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);      
+        quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
-        quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);                         
+        quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
         quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth(), spriteSheetSocar.getHeight());
         // Define as animações
@@ -86,7 +92,7 @@ public class Heroi {
             quadrosAnimacaoPularEsquerda[0][0],
             quadrosAnimacaoPularEsquerda[0][1]
         });
-        
+
         animacaoSocar = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoSocar[0][0]
         });
@@ -206,11 +212,11 @@ public class Heroi {
     public int getHP(){
         return HP;
     }
-    
+
     public void perdeuVida(){
         perdeuVida(null);
     }
-    
+
     public void perdeuVida(BaseArmadilha armadilha){
         if (armadilha instanceof Pedra)
             animacaoCorrente = animacaoEsmagado;
@@ -220,8 +226,17 @@ public class Heroi {
     public Rectangle getHitbox() {
         return hitbox;
     }
-            
-    public void socar () {
+
+    public void socar (Heroi heroi, ArrayList<BaseInimigo> inimigos) {
         animacaoCorrente = animacaoSocar;
+        Rectangle alcanceDoSoco = new Rectangle(x-150, y, 150, 175);
+        for(Iterator<BaseInimigo> i = inimigos.iterator(); i.hasNext(); ) {
+            BaseInimigo temp = i.next();
+            if (Collision.rectsOverlap(alcanceDoSoco, temp.hitbox))
+            {
+                temp.dispose();
+                i.remove();
+            }
+        }
     }
 }
