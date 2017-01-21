@@ -292,7 +292,7 @@ public class Game extends ApplicationAdapter {
                     if ((armadilha.getX() >= limiteCameraEsquerda) && (armadilha.getX() <= limiteCameraDireita)){
                         armadilha.render(batch,debug);
                         if (verificarColisao(armadilha)){
-                            heroi.perdeuVida(armadilha);
+                            heroi.perdeuVida();
                             armadilha.setColidiu(true);
                         }
                     }

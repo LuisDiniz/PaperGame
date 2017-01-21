@@ -26,8 +26,7 @@ public class Heroi {
     private final Texture texturaHeroi;
     private Texture spriteSheetPularEsquerda;
     private Texture spriteSheetPularDireita;    
-    private Texture spriteSheetAbaixar;
-    private Texture spriteSheetEsmagado;    
+    private Texture spriteSheetAbaixar;    
     private Texture texturaHitbox;
     private Texture spriteSheetSocar;
     
@@ -36,14 +35,12 @@ public class Heroi {
     private final Animation animacaoAndarDireita;
     private final Animation animacaoPularEsquerda;
     private final Animation animacaoPularDireita;
-    private final Animation animacaoAbaixar;
-    private final Animation animacaoEsmagado;    
+    private final Animation animacaoAbaixar;   
     private final Animation<TextureRegion> animacaoSocar;
     
     private TextureRegion[][] quadrosAnimacaoPularEsquerda;
     private TextureRegion[][] quadrosAnimacaoPularDireita;
-    private TextureRegion[][] quadrosAnimacaoAbaixar;
-    private TextureRegion[][] quadrosAnimacaoEsmagado;    
+    private TextureRegion[][] quadrosAnimacaoAbaixar;    
     private TextureRegion[][] quadrosAnimacaoSocar;
 
     private int x,y, velocidadeY;
@@ -65,11 +62,9 @@ public class Heroi {
         spriteSheetPularEsquerda = new Texture("spritesheet-pular.png");
         spriteSheetPularDireita = new Texture("spritesheet-pular-dir.png");
         spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
-        spriteSheetEsmagado = new Texture("spritesheetEsmagado.png");
         spriteSheetSocar = new Texture("Soco.png");
         quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
-        quadrosAnimacaoEsmagado = TextureRegion.split(spriteSheetEsmagado, 109, 226);
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
         quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth(), spriteSheetSocar.getHeight());
         // Define as animações
@@ -100,14 +95,6 @@ public class Heroi {
         animacaoPularDireita = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularDireita[0][1],            
             quadrosAnimacaoPularDireita[0][0]
-        });
-        
-        animacaoEsmagado = new Animation(0.3f, new TextureRegion[] {
-            quadrosAnimacaoPularEsquerda[0][0],
-            quadrosAnimacaoEsmagado[0][1],            
-            quadrosAnimacaoEsmagado[0][0],
-            quadrosAnimacaoEsmagado[0][1],
-            quadrosAnimacaoPularEsquerda[0][0]            
         });        
         
         animacaoCorrente = animacaoAndarEsquerda;
@@ -128,7 +115,7 @@ public class Heroi {
     }
     
     public boolean andarDireita(){
-        if (y == POSICAO_INICIAL_HEROI_Y)
+        if (hitbox.y == Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
             animacaoCorrente = animacaoAndarDireita;
         else
             animacaoCorrente = animacaoPularDireita;        
@@ -142,7 +129,7 @@ public class Heroi {
     }
     
     public boolean andarEsquerda(){
-        if (y == POSICAO_INICIAL_HEROI_Y)
+        if (hitbox.y == Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
             animacaoCorrente = animacaoAndarEsquerda;
         else
             animacaoCorrente = animacaoPularEsquerda;
@@ -174,13 +161,13 @@ public class Heroi {
         // ?? CRIAR ANIMACAO PARADO OU SO DESENHAR A SPRITE NORMAL NESSE CASO ??;
         // ?? COMO A GENTE CONTROLARIA O DESENHO DA SPIRTE/ANIMACAO ??        
         if (esquerda){
-            if (y == POSICAO_INICIAL_HEROI_Y)
+            if (hitbox.y == Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
                 animacaoCorrente = animacaoAndarEsquerda;
             else
                 animacaoCorrente = animacaoPularEsquerda;
         }
         else{
-            if (y == POSICAO_INICIAL_HEROI_Y)
+            if (hitbox.y == Chao.getFloorHeightBelowCharacter(hitbox.x, hitbox.width))
                 animacaoCorrente = animacaoAndarDireita;
             else
                 animacaoCorrente = animacaoPularDireita;            
@@ -214,12 +201,6 @@ public class Heroi {
     }
 
     public void perdeuVida(){
-        perdeuVida(null);
-    }
-
-    public void perdeuVida(BaseArmadilha armadilha){
-        if (armadilha instanceof Pedra)
-            animacaoCorrente = animacaoEsmagado;
         HP = HP - 1;
     }
 
