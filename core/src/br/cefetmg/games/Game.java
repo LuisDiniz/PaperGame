@@ -66,7 +66,7 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = true;
+    private boolean debug = false;
     private BitmapFont font;
     private float posicaoFontX;
 
@@ -153,6 +153,13 @@ public class Game extends ApplicationAdapter {
                 batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
             }
         }
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            if (moverCamera != null)
+                moverCamera.cancel();
+            camera.position.x = mapa.getWidth() - camera.viewportWidth / 2f;
+            fimAnimacaoInicial = true;
+        }
 
         if (fimAnimacaoInicial) {
             isAgachado = false;
@@ -201,8 +208,8 @@ public class Game extends ApplicationAdapter {
             verificarDisparoArmadilha();
 
             //Spawn de inimigos
-//            if (inimigos.size() < 1)
-//                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
+            if (inimigos.size() < 1);
+                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){

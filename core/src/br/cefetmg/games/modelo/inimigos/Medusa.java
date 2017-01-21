@@ -11,6 +11,7 @@ public class Medusa extends BaseInimigo {
     private float velocidadeY;
     private final static float VELOCIDADE_MAX_Y = 4;
     private final static float VELOCIDADE_X = 1.5f;
+    private Texture texturaHitbox;
 
     public Medusa (float x, Texture textura) {
         this.x = x;
@@ -19,6 +20,8 @@ public class Medusa extends BaseInimigo {
         velocidadeY = 0;
         this.textura = textura;
         hitbox = new Rectangle(x, y, 68, 72);
+        // Carrega as texturas e animações
+        texturaHitbox = new Texture ("TexturaVermelha.png");        
     }
 
     @Override
