@@ -42,6 +42,7 @@ public class Game extends ApplicationAdapter {
     private Texture seta45Graus;
     private Texture seta90Graus;
     private Texture seta135Graus;
+    private Texture tutorial;
     
     private Texture texturaMedusa;
     private Texture caixa;
@@ -88,6 +89,7 @@ public class Game extends ApplicationAdapter {
         seta90Graus = new Texture("Seta90Graus.png");
         seta135Graus = new Texture("Seta135Graus.png");
         texturaMedusa = new Texture("Medusa.png");
+        tutorial = new Texture("Tutorial_Temp.png");
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -224,8 +226,11 @@ public class Game extends ApplicationAdapter {
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
                 princesa.animacaoFinal();                                               
         }
-        else
+        else{
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
+            batch.draw(tutorial, camera.viewportWidth / 2f, camera.viewportHeight / 4f);
+        }
+        
         
         if (debug)
             posicaoFontX = camera.position.x + 350;
