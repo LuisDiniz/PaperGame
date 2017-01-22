@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import org.w3c.dom.css.Rect;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,8 +19,11 @@ public class Heroi {
     private final static int VELOCIDADE_HEROI_X = 5;
     private final static int VELOCIDADE_HEROI_Y = 20;
     private final int POSICAO_INICIAL_HEROI_Y;
-    private int HP;
-    private boolean esquerda;
+    private int x;
+    private int y;
+    private int velocidadeY;
+    public Rectangle hitbox;
+    private int HP;    
     
     private Sprite spriteHeroi;
     private final Texture texturaHeroi;
@@ -42,10 +45,11 @@ public class Heroi {
     private TextureRegion[][] quadrosAnimacaoPularDireita;
     private TextureRegion[][] quadrosAnimacaoAbaixar;    
     private TextureRegion[][] quadrosAnimacaoSocar;
-
-    private int x,y, velocidadeY;
+    
     private float tempoAnimacao;
-    public Rectangle hitbox;
+    private boolean esquerda;
+    private boolean visivel;
+    private Timer.Task perdeuVidaTask;
     
     public Heroi(int x, int y){
         // Guarda a posição inicial do heroi                 
@@ -54,6 +58,7 @@ public class Heroi {
         POSICAO_INICIAL_HEROI_Y = y;
         HP = 3;
         esquerda = true;
+        visivel = true;
         hitbox = new Rectangle(x+27, y+10, 56, 175);
         // Carrega as texturas e animações
         texturaHeroi = new Texture("Heroi.png");
@@ -184,11 +189,12 @@ public class Heroi {
 
     public void render(SpriteBatch batch, boolean debug) {
         //Desenha o retangulo da Hitbox no heroi
-        if (debug)
+        if(debug)
             batch.draw(texturaHitbox, hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         tempoAnimacao = tempoAnimacao + Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(tempoAnimacao);
-        batch.draw(currentFrame,x,y);
+        if(visivel)
+            batch.draw(currentFrame,x,y);
     }
 
     public float getWidth() {
@@ -202,6 +208,7 @@ public class Heroi {
 
     public void perdeuVida(){
         HP = HP - 1;
+        animacaoPerdeuVida();
     }
 
     public Rectangle getHitbox() {
@@ -219,5 +226,16 @@ public class Heroi {
                 i.remove();
             }
         }
+    }
+    
+    public void animacaoPerdeuVida(){
+        // Inicializa a task mostrarObjetivo
+        perdeuVidaTask = new Timer.Task(){
+                            @Override
+                            public void run() {
+                                visivel = !visivel;
+                            }
+        };        
+        Timer.schedule(perdeuVidaTask, 0, 0.3f, 5);  
     }
 }

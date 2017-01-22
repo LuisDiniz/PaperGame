@@ -176,8 +176,10 @@ public class Game extends ApplicationAdapter {
                 if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
                     (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
                     (camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)))
-                    if (camera.position.x <= heroi.getX() + heroi.getWidth() + (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;      
+                    if (limiteCameraDireita < mapa.getWidth())
+                        camera.position.x = camera.position.x + VELOCIDADE_CAMERA_X;
+                    else
+                        camera.position.x = mapa.getWidth() - camera.viewportWidth / 2f;
                 // Movimenta o Heroi
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
                     andou = heroi.andarDireita();
@@ -188,8 +190,10 @@ public class Game extends ApplicationAdapter {
                 if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
                     (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
                     (camera.position.x > camera.viewportWidth / 2f))
-                    if (camera.position.x >= heroi.getX() + heroi.getWidth() - (camera.viewportWidth / 2f))
-                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;                  
+                    if (limiteCameraEsquerda > 0)
+                        camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
+                    else
+                        camera.position.x = camera.viewportWidth / 2f;                    
                 // Movimenta o Heroi
                 if (heroi.getX() > 0)
                     andou = heroi.andarEsquerda();              
@@ -208,8 +212,8 @@ public class Game extends ApplicationAdapter {
             verificarDisparoArmadilha();
 
             //Spawn de inimigos
-            if (inimigos.size() < 1);
-                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
+//            if (inimigos.size() < 1);
+//                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){
@@ -278,7 +282,7 @@ public class Game extends ApplicationAdapter {
 
     private void inicializarArrayArmadilhas() {
         armadilhas = new ArrayList<BaseArmadilha>();
-        armadilhas.add(new Pedra(1000, 0, true));
+        armadilhas.add(new Pedra(1000, 12, true));
         //armadilhas.append(new Pedra(1000,0));
     }
 
