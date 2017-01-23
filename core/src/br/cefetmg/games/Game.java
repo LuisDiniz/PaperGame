@@ -105,7 +105,7 @@ public class Game extends ApplicationAdapter {
         gameOverScreen = new Texture(Gdx.files.internal("GameOverScreen.png"));
         victoryScreen = new Texture(Gdx.files.internal("VictoryScreen.png"));
         //Carrega os sons e musicas
-        musicaVitoria = Gdx.audio.newMusic(Gdx.files.internal(""));
+        musicaVitoria = Gdx.audio.newMusic(Gdx.files.internal("Vitoria.mp3"));
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -162,6 +162,7 @@ public class Game extends ApplicationAdapter {
     @Override
     public void dispose () {
         batch.dispose();
+        musicaVitoria.dispose();
     }
     
     public void update(){
@@ -249,6 +250,7 @@ public class Game extends ApplicationAdapter {
             if (heroi.getX() <= (princesa.getX() + princesa.getWidth())) {
                 princesa.animacaoFinal();
                 gameState = 1;
+                musicaVitoria.play();
             }
         }
         else{
@@ -396,7 +398,7 @@ public class Game extends ApplicationAdapter {
         if (tempoVitoria == 0)
             tempoVitoria = System.currentTimeMillis();
         deltaTempoVitoria = System.currentTimeMillis() - tempoVitoria;
-        if (deltaTempoVitoria >= 1500) {
+        if (deltaTempoVitoria >= 2500) {
             batch.draw(victoryScreen,0,0);
         }
 
