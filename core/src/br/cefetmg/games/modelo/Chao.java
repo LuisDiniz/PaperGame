@@ -22,11 +22,10 @@ public class Chao {
     {
         if (posX <= 5000 && posX >= 0){
             //altura da caixa
-            for(Iterator<Integer> i = posInicialCaixas.iterator(); i.hasNext();) {
-                Integer temp = i.next();            
-                if (posX >= temp && (posX <= (temp + 100)))
-                    return 100;
-            }        
+            for (Integer posInicialCaixa: posInicialCaixas){
+                if (posX >= posInicialCaixa && (posX <= (posInicialCaixa + 100)))
+                    return 100;                
+            }      
             return 21;
         }
         else 
