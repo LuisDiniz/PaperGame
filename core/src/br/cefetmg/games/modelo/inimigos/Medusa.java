@@ -14,7 +14,7 @@ public class Medusa extends BaseInimigo {
     private Texture texturaHitbox;
 
     public Medusa (float x, Texture textura) {
-        this.x = x;
+        this.x = x-70;
         this.y = Math.random() > 0.5 ? 300 : 21;
         subindo = y < Gdx.graphics.getHeight()/2;
         velocidadeY = 0;

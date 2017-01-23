@@ -239,11 +239,16 @@ public class Heroi {
     }
 
     public void socar (Heroi heroi, ArrayList<BaseInimigo> inimigos) {
-        if (esquerda)
+        Rectangle alcanceDoSoco;
+        if (esquerda) {
             animacaoCorrente = animacaoSocar;
-        else
+            alcanceDoSoco = new Rectangle(x-150, y, 150, 175);
+        }
+        else {
             animacaoCorrente = animacaoSocarDireita;
-        Rectangle alcanceDoSoco = new Rectangle(x-150, y, 150, 175);
+            alcanceDoSoco = new Rectangle(x+109, y, 150, 175);
+        }
+
         for(Iterator<BaseInimigo> i = inimigos.iterator(); i.hasNext(); ) {
             BaseInimigo temp = i.next();
             if (Collision.rectsOverlap(alcanceDoSoco, temp.hitbox))

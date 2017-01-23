@@ -67,7 +67,7 @@ public class Game extends ApplicationAdapter {
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
     // DEBUG
-    private boolean debug = false;
+    private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
 
@@ -123,7 +123,10 @@ public class Game extends ApplicationAdapter {
         heroi.render(batch, debug);
         princesa.render(batch);               
         batch.draw(caixa, 500, 0, 100, 100);
-        if (!inimigos.isEmpty()) inimigos.get(0).render(batch);
+        if (!inimigos.isEmpty())
+            for (BaseInimigo inimigo: inimigos) {
+                inimigo.render(batch);
+            }
         
         if (debug)
             desenharVariaveisDebug();
@@ -155,7 +158,7 @@ public class Game extends ApplicationAdapter {
                 batch.draw(seta135Graus, POSICAO_SETA_135_GRAUS_X, POSICAO_SETAS_Y);
             }
         }
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             if (moverCamera != null)
                 moverCamera.cancel();
@@ -214,8 +217,8 @@ public class Game extends ApplicationAdapter {
             verificarDisparoArmadilha();
 
             //Spawn de inimigos
-//            if (inimigos.size() < 1);
-//                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
+            if (inimigos.size() < 1)
+                inimigos.add( new Medusa(camera.position.x - camera.viewportWidth/2, texturaMedusa));
 
             //Deteccao de colisoes
             if (!isAgachado){
@@ -329,6 +332,8 @@ public class Game extends ApplicationAdapter {
                 temp.dispose();
                 i.remove();
             }
+            if (temp.hitbox.x >= limiteCameraDireita)
+                i.remove();
         }
     }
 
