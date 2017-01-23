@@ -43,7 +43,7 @@ public class Game extends ApplicationAdapter {
     private Texture seta90Graus;
     private Texture seta135Graus;
     private Texture tutorial;
-    
+    private Texture espinhos;
     private Texture texturaMedusa;
     private Texture caixa;
             
@@ -90,6 +90,7 @@ public class Game extends ApplicationAdapter {
         seta135Graus = new Texture("Seta135Graus.png");
         texturaMedusa = new Texture("Medusa.png");
         tutorial = new Texture("Tutorial_Temp.png");
+        espinhos = new Texture("Espinhos.png");
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -122,7 +123,7 @@ public class Game extends ApplicationAdapter {
         
         heroi.render(batch, debug);
         princesa.render(batch);               
-        batch.draw(caixa, 500, 0, 100, 100);
+        desenharObjetos();
         if (!inimigos.isEmpty())
             for (BaseInimigo inimigo: inimigos) {
                 inimigo.render(batch);
@@ -351,6 +352,13 @@ public class Game extends ApplicationAdapter {
             return true;
         else
             return false;
+    }
+
+    private void desenharObjetos() {
+        batch.draw(caixa, 500, 0, 100, 100);
+        batch.draw(caixa, 3150, 0, 100, 100);
+        batch.draw(espinhos, 3250, 21);
+        batch.draw(caixa, 3400, 0, 100, 100);        
     }
         
 }

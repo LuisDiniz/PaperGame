@@ -14,6 +14,10 @@ class Chao {
             //altura da caixa
             if (posX >= 500 && posX <= 600)
                 return 100;
+            else if (posX >= 3400 && posX <= 3500)
+                return 100;
+            else if (posX >= 3150 && posX <= 3250)
+                return 100;            
             else return 21;
         else return 21;
     }
