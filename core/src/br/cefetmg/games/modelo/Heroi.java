@@ -29,22 +29,28 @@ public class Heroi {
     private final Texture texturaHeroi;
     private Texture spriteSheetPularEsquerda;
     private Texture spriteSheetPularDireita;    
-    private Texture spriteSheetAbaixar;    
+    private Texture spriteSheetAbaixar;
+    private Texture spriteSheetAbaixarDireita;    
     private Texture texturaHitbox;
     private Texture spriteSheetSocar;
+    private Texture spriteSheetSocarDireita;
     
     private Animation animacaoCorrente;
     private final Animation animacaoAndarEsquerda;
     private final Animation animacaoAndarDireita;
     private final Animation animacaoPularEsquerda;
     private final Animation animacaoPularDireita;
-    private final Animation animacaoAbaixar;   
+    private final Animation animacaoAbaixar;
+    private final Animation animacaoAbaixarDireita;
     private final Animation<TextureRegion> animacaoSocar;
+    private final Animation<TextureRegion> animacaoSocarDireita;
     
     private TextureRegion[][] quadrosAnimacaoPularEsquerda;
     private TextureRegion[][] quadrosAnimacaoPularDireita;
-    private TextureRegion[][] quadrosAnimacaoAbaixar;    
+    private TextureRegion[][] quadrosAnimacaoAbaixar;
+    private TextureRegion[][] quadrosAnimacaoAbaixarDireita;
     private TextureRegion[][] quadrosAnimacaoSocar;
+    private TextureRegion[][] quadrosAnimacaoSocarDireita;
     
     private float tempoAnimacao;
     private boolean esquerda;
@@ -67,11 +73,15 @@ public class Heroi {
         spriteSheetPularEsquerda = new Texture("spritesheet-pular.png");
         spriteSheetPularDireita = new Texture("spritesheet-pular-dir.png");
         spriteSheetAbaixar = new Texture("spritesheet-abaixar.png");
+        spriteSheetAbaixarDireita = new Texture("spritesheet-abaixar-dir.png");
         spriteSheetSocar = new Texture("Soco.png");
+        spriteSheetSocarDireita = new Texture("Soco-dir.png");
         quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
+        quadrosAnimacaoAbaixarDireita = TextureRegion.split(spriteSheetAbaixarDireita, 109, 226);
         quadrosAnimacaoSocar = TextureRegion.split(spriteSheetSocar,spriteSheetSocar.getWidth(), spriteSheetSocar.getHeight());
+        quadrosAnimacaoSocarDireita = TextureRegion.split(spriteSheetSocarDireita,spriteSheetSocarDireita.getWidth(), spriteSheetSocarDireita.getHeight());
         // Define as animações
         animacaoAndarEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularEsquerda[0][0]
@@ -87,6 +97,11 @@ public class Heroi {
             quadrosAnimacaoAbaixar[0][0],
             quadrosAnimacaoAbaixar[0][1]            
         });
+        
+        animacaoAbaixarDireita = new Animation(0.3f, new TextureRegion[] {
+            quadrosAnimacaoAbaixarDireita[0][1],
+            quadrosAnimacaoAbaixarDireita[0][0]            
+        });
        
         animacaoPularEsquerda = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoPularEsquerda[0][0],
@@ -95,6 +110,10 @@ public class Heroi {
 
         animacaoSocar = new Animation(0.3f, new TextureRegion[] {
             quadrosAnimacaoSocar[0][0]
+        });
+        
+        animacaoSocarDireita = new Animation(0.3f, new TextureRegion[] {
+            quadrosAnimacaoSocarDireita[0][0]
         });
         
         animacaoPularDireita = new Animation(0.3f, new TextureRegion[] {
@@ -158,7 +177,11 @@ public class Heroi {
     }
     
     public void abaixar(){
-        animacaoCorrente = animacaoAbaixar;
+        if (esquerda)
+            animacaoCorrente = animacaoAbaixar;
+        else
+            animacaoCorrente = animacaoAbaixarDireita;        
+        
         hitbox.height = 120;
     }
 
@@ -216,7 +239,10 @@ public class Heroi {
     }
 
     public void socar (Heroi heroi, ArrayList<BaseInimigo> inimigos) {
-        animacaoCorrente = animacaoSocar;
+        if (esquerda)
+            animacaoCorrente = animacaoSocar;
+        else
+            animacaoCorrente = animacaoSocarDireita;
         Rectangle alcanceDoSoco = new Rectangle(x-150, y, 150, 175);
         for(Iterator<BaseInimigo> i = inimigos.iterator(); i.hasNext(); ) {
             BaseInimigo temp = i.next();

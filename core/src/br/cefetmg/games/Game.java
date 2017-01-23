@@ -28,7 +28,7 @@ public class Game extends ApplicationAdapter {
     private final static int OBJETIVO_POS_X = 100;
     private final static int OBJETIVO_POS_Y = 0;
     private final static int VELOCIDADE_CAMERA_X = 5;
-    private final static int POSICAO_INICIAL_HEROI_X = 2800;
+    private final static int POSICAO_INICIAL_HEROI_X = 3800;
     private final static int POSICAO_INICIAL_HEROI_Y = 11;
     private final static int POSICAO_SETA_45_GRAUS_X = 75;
     private final static int POSICAO_SETA_90_GRAUS_X = 155;
