@@ -77,7 +77,7 @@ public class Game extends ApplicationAdapter {
     private long deltaTempoVitoria;
     private long tempoVitoria=0;
     // DEBUG
-    private boolean debug = false;
+    private boolean debug = true;
     private BitmapFont font;
     private float posicaoFontX;
 
