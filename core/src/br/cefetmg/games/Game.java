@@ -4,6 +4,7 @@ import br.cefetmg.games.modelo.BaseArmadilha;
 import br.cefetmg.games.modelo.Princesa;
 import br.cefetmg.games.modelo.Heroi;
 import br.cefetmg.games.modelo.Pedra;
+import br.cefetmg.games.modelo.Chao;
 import br.cefetmg.games.modelo.inimigos.BaseInimigo;
 import br.cefetmg.games.modelo.inimigos.Medusa;
 import br.cefetmg.games.utils.Collision;
@@ -53,6 +54,7 @@ public class Game extends ApplicationAdapter {
     private Princesa princesa;
     private Pedra pedra;
     private ArrayList<BaseInimigo> inimigos;
+    private Chao chao;
     // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
@@ -94,6 +96,7 @@ public class Game extends ApplicationAdapter {
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
+        chao = new Chao();
         // Inicializa a câmera com o tamanho da tela
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         if (debug)
@@ -355,10 +358,20 @@ public class Game extends ApplicationAdapter {
     }
 
     private void desenharObjetos() {
+        chao.addNovaCaixa(500);
         batch.draw(caixa, 500, 0, 100, 100);
-        batch.draw(caixa, 3150, 0, 100, 100);
-        batch.draw(espinhos, 3250, 21);
-        batch.draw(caixa, 3400, 0, 100, 100);        
+        desenharCaixasComEspinhos(3150,6);                 
+    }
+    
+    private void desenharCaixasComEspinhos(int inicio, int quantidade){
+        for (int i = 0; i < quantidade;i++){
+            batch.draw(caixa, inicio, 0, 100, 100);
+            chao.addNovaCaixa(inicio);            
+            batch.draw(espinhos, inicio - 150, 21);            
+            batch.draw(caixa, inicio - 250, 0, 100, 100);
+            chao.addNovaCaixa(inicio - 250);
+            inicio = inicio - 250;
+        }
     }
         
 }
