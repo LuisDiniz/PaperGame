@@ -3,6 +3,7 @@ package br.cefetmg.games.modelo;
 import br.cefetmg.games.modelo.inimigos.BaseInimigo;
 import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Timer;
 
+import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -34,6 +36,8 @@ public class Heroi {
     private Texture texturaHitbox;
     private Texture spriteSheetSocar;
     private Texture spriteSheetSocarDireita;
+    private Texture socoMagico;
+    private Texture socoMagicoDireita;
     
     private Animation animacaoCorrente;
     private final Animation animacaoAndarEsquerda;
@@ -76,6 +80,8 @@ public class Heroi {
         spriteSheetAbaixarDireita = new Texture("spritesheet-abaixar-dir.png");
         spriteSheetSocar = new Texture("Soco.png");
         spriteSheetSocarDireita = new Texture("Soco-dir.png");
+        socoMagico = new Texture (Gdx.files.internal("SocoMagico.png"));
+        socoMagicoDireita = new Texture (Gdx.files.internal("SocoMagico-dir.png"));
         quadrosAnimacaoPularEsquerda = TextureRegion.split(spriteSheetPularEsquerda, 109, 226);
         quadrosAnimacaoPularDireita = TextureRegion.split(spriteSheetPularDireita, 109, 226);
         quadrosAnimacaoAbaixar = TextureRegion.split(spriteSheetAbaixar, 109, 226);
@@ -218,6 +224,12 @@ public class Heroi {
         TextureRegion currentFrame = (TextureRegion) animacaoCorrente.getKeyFrame(tempoAnimacao);
         if(visivel)
             batch.draw(currentFrame,x,y);
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+            if (esquerda)
+                batch.draw(socoMagico, x - 150, y);
+            else
+                batch.draw(socoMagicoDireita, x, y);
+        }
     }
 
     public float getWidth() {

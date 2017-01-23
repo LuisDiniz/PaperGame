@@ -11,6 +11,7 @@ import br.cefetmg.games.utils.Collision;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -47,6 +48,8 @@ public class Game extends ApplicationAdapter {
     private Texture espinhos;
     private Texture texturaMedusa;
     private Texture caixa;
+    private Texture gameOverScreen;
+    private Texture victoryScreen;
             
             
     // Modelos
@@ -55,6 +58,8 @@ public class Game extends ApplicationAdapter {
     private Pedra pedra;
     private ArrayList<BaseInimigo> inimigos;
     private Chao chao;
+    //Sons e Musica
+    Music musicaVitoria;
     // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
@@ -68,8 +73,11 @@ public class Game extends ApplicationAdapter {
     private int limiteCameraDireita;
     private List<BaseArmadilha> armadilhas;
     private boolean isAgachado;
+    private int gameState;
+    private long deltaTempoVitoria;
+    private long tempoVitoria=0;
     // DEBUG
-    private boolean debug = true;
+    private boolean debug = false;
     private BitmapFont font;
     private float posicaoFontX;
 
@@ -79,6 +87,7 @@ public class Game extends ApplicationAdapter {
         // Inicializa variáveis de controle;
         animacaoMostrarObjetivo = true;
         comecoFase = true;
+        gameState = 0;
         if (debug)
             fimAnimacaoInicial = true;
         else
@@ -93,6 +102,10 @@ public class Game extends ApplicationAdapter {
         texturaMedusa = new Texture("Medusa.png");
         tutorial = new Texture("Tutorial_Temp.png");
         espinhos = new Texture("Espinhos.png");
+        gameOverScreen = new Texture(Gdx.files.internal("GameOverScreen.png"));
+        victoryScreen = new Texture(Gdx.files.internal("VictoryScreen.png"));
+        //Carrega os sons e musicas
+        musicaVitoria = Gdx.audio.newMusic(Gdx.files.internal(""));
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -121,7 +134,7 @@ public class Game extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
-        
+
         batch.draw(mapa, 0, 0);
         
         heroi.render(batch, debug);
@@ -137,8 +150,11 @@ public class Game extends ApplicationAdapter {
         
         // Desenha a camera 
         batch.setProjectionMatrix(camera.combined); 
-        
-        update();
+
+        if (gameState == 0)
+            update();
+        else if (gameState == 1)
+            vencerJogo();
         
         batch.end();
     }
@@ -149,7 +165,7 @@ public class Game extends ApplicationAdapter {
     }
     
     public void update(){
-        
+
         if (!debug){
             // Realiza a animação inicial do jogo apenas se estiver nos começo da fase
             if (comecoFase)
@@ -172,7 +188,7 @@ public class Game extends ApplicationAdapter {
 
         if (fimAnimacaoInicial) {
             isAgachado = false;
-            
+
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 heroi.pular();
             }
@@ -182,7 +198,7 @@ public class Game extends ApplicationAdapter {
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 boolean andou = false;
                  // Movimenta a câmera
-                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) &&
                     (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
                     (camera.position.x <= (mapa.getWidth() - camera.viewportWidth/2f)))
                     if (limiteCameraDireita < mapa.getWidth())
@@ -192,32 +208,32 @@ public class Game extends ApplicationAdapter {
                 // Movimenta o Heroi
                 if (heroi.getX() + heroi.getWidth() < mapa.getWidth())
                     andou = heroi.andarDireita();
-            } 
+            }
             else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 boolean andou = false;
                 // Movimenta a câmera
-                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) && 
+                if ((heroi.getX() < limiteCameraDireita - distanciaHeroiTela) &&
                     (heroi.getX() > limiteCameraEsquerda + distanciaHeroiTela) &&
                     (camera.position.x > camera.viewportWidth / 2f))
                     if (limiteCameraEsquerda > 0)
                         camera.position.x = camera.position.x - VELOCIDADE_CAMERA_X;
                     else
-                        camera.position.x = camera.viewportWidth / 2f;                    
+                        camera.position.x = camera.viewportWidth / 2f;
                 // Movimenta o Heroi
                 if (heroi.getX() > 0)
-                    andou = heroi.andarEsquerda();              
-            } 
+                    andou = heroi.andarEsquerda();
+            }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 heroi.abaixar();
                 isAgachado = true;
-            }          
+            }
             else if (!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
                 heroi.parado();
             }
-            
+
             limiteCameraEsquerda = (int) (camera.position.x - camera.viewportWidth / 2f);
             limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
-            
+
             verificarDisparoArmadilha();
 
             //Spawn de inimigos
@@ -230,18 +246,20 @@ public class Game extends ApplicationAdapter {
             }
 
             // Definir Local ou Quando ativar a animação final da princesa
-            if (heroi.getX() <= (princesa.getX() + princesa.getWidth()))
-                princesa.animacaoFinal();                                               
+            if (heroi.getX() <= (princesa.getX() + princesa.getWidth())) {
+                princesa.animacaoFinal();
+                gameState = 1;
+            }
         }
         else{
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
             batch.draw(tutorial, camera.viewportWidth / 2f, camera.viewportHeight / 4f);
         }
-        
-        
+
+
         if (debug)
             posicaoFontX = camera.position.x + 350;
-        
+
         camera.update();
         heroi.update();
         updateInimigos();
@@ -372,6 +390,21 @@ public class Game extends ApplicationAdapter {
             chao.addNovaCaixa(inicio - 250);
             inicio = inicio - 250;
         }
+    }
+
+    private void vencerJogo () {
+        if (tempoVitoria == 0)
+            tempoVitoria = System.currentTimeMillis();
+        deltaTempoVitoria = System.currentTimeMillis() - tempoVitoria;
+        if (deltaTempoVitoria >= 1500) {
+            batch.draw(victoryScreen,0,0);
+        }
+
+    }
+
+    private void perderJogo () {
+        gameState = 2;
+        //entre outras coisas;
     }
         
 }

@@ -19,7 +19,7 @@ public class Medusa extends BaseInimigo {
         subindo = y < Gdx.graphics.getHeight()/2;
         velocidadeY = 0;
         this.textura = textura;
-        hitbox = new Rectangle(x, y, 68, 72);
+        hitbox = new Rectangle(x, y, 135, 72);
         // Carrega as texturas e animações
         texturaHitbox = new Texture ("TexturaVermelha.png");        
     }
