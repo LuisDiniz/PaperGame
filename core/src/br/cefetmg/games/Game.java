@@ -59,7 +59,8 @@ public class Game extends ApplicationAdapter {
     private ArrayList<BaseInimigo> inimigos;
     private Chao chao;
     //Sons e Musica
-    Music musicaVitoria;
+    private Music musicaVitoria;
+    private Music musicaDerrota;
     // Tasks
     private Timer.Task moverCamera;
     private Timer.Task mostrarObjetivo;
@@ -108,6 +109,7 @@ public class Game extends ApplicationAdapter {
         victoryScreen = new Texture(Gdx.files.internal("VictoryScreen.png"));
         //Carrega os sons e musicas
         musicaVitoria = Gdx.audio.newMusic(Gdx.files.internal("Vitoria.mp3"));
+        musicaDerrota = Gdx.audio.newMusic(Gdx.files.internal("Derrota.mp3"));
         // Inicializa os objetos modelos
         heroi = new Heroi(POSICAO_INICIAL_HEROI_X, POSICAO_INICIAL_HEROI_Y);
         princesa = new Princesa(OBJETIVO_POS_X, OBJETIVO_POS_Y);
@@ -157,6 +159,8 @@ public class Game extends ApplicationAdapter {
             update();
         else if (gameState == 1)
             vencerJogo();
+        else if (gameState == 2)
+            perderJogo();
         
         batch.end();
     }
@@ -254,6 +258,10 @@ public class Game extends ApplicationAdapter {
                 princesa.animacaoFinal();
                 gameState = 1;
                 musicaVitoria.play();
+            }
+            if (heroi.getHP() <= 0) {
+                gameState = 2;
+                musicaDerrota.play();
             }
         }
         else{
@@ -403,14 +411,18 @@ public class Game extends ApplicationAdapter {
             tempoVitoria = System.currentTimeMillis();
         deltaTempoVitoria = System.currentTimeMillis() - tempoVitoria;
         if (deltaTempoVitoria >= 2500) {
-            batch.draw(victoryScreen,0,0);
+            batch.draw(victoryScreen,limiteCameraEsquerda,0);
         }
 
     }
 
     private void perderJogo () {
-        gameState = 2;
-        //entre outras coisas;
+        if (tempoVitoria == 0)
+            tempoVitoria = System.currentTimeMillis();
+        deltaTempoVitoria = System.currentTimeMillis() - tempoVitoria;
+        if (deltaTempoVitoria >= 2500) {
+            batch.draw(gameOverScreen, limiteCameraEsquerda, 0);
+        }
     }
 
     private void verificarColisaoEspinho() {
