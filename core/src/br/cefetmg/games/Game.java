@@ -242,7 +242,6 @@ public class Game extends ApplicationAdapter {
             limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
 
             verificarDisparoArmadilha();
-            verificarColisaoEspinho();
 
             //Spawn de inimigos
             if (inimigos.size() < 1)
@@ -263,6 +262,8 @@ public class Game extends ApplicationAdapter {
                 gameState = 2;
                 musicaDerrota.play();
             }
+            
+            verificarColisaoEspinho();
         }
         else{
             batch.draw(labelPrincesa, POSICAO_LABEL_PRINCESA_X, POSICAO_LABEL_PRINCESA_Y);
