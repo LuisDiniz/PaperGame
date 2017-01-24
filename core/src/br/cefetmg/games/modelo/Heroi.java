@@ -281,4 +281,12 @@ public class Heroi {
         };        
         Timer.schedule(perdeuVidaTask, 0, 0.3f, 5);  
     }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

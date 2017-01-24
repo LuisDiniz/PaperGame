@@ -76,8 +76,9 @@ public class Game extends ApplicationAdapter {
     private int gameState;
     private long deltaTempoVitoria;
     private long tempoVitoria=0;
+    private boolean primeiraFase;
     // DEBUG
-    private boolean debug = true;
+    private boolean debug = false;
     private BitmapFont font;
     private float posicaoFontX;
 
@@ -88,6 +89,7 @@ public class Game extends ApplicationAdapter {
         animacaoMostrarObjetivo = true;
         comecoFase = true;
         gameState = 0;
+        primeiraFase = true;
         if (debug)
             fimAnimacaoInicial = true;
         else
@@ -134,7 +136,7 @@ public class Game extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
-
+        
         batch.draw(mapa, 0, 0);
         
         heroi.render(batch, debug);
@@ -236,6 +238,7 @@ public class Game extends ApplicationAdapter {
             limiteCameraDireita = (int) (camera.position.x + camera.viewportWidth / 2f);
 
             verificarDisparoArmadilha();
+            verificarColisaoEspinho();
 
             //Spawn de inimigos
             if (inimigos.size() < 1)
@@ -314,7 +317,7 @@ public class Game extends ApplicationAdapter {
 
     private void inicializarArrayArmadilhas() {
         armadilhas = new ArrayList<BaseArmadilha>();
-        armadilhas.add(new Pedra(1000, 12, true));
+        armadilhas.add(new Pedra(700, 12, true));
         //armadilhas.append(new Pedra(1000,0));
     }
 
@@ -387,7 +390,8 @@ public class Game extends ApplicationAdapter {
         for (int i = 0; i < quantidade;i++){
             batch.draw(caixa, inicio, 0, 100, 100);
             chao.addNovaCaixa(inicio);            
-            batch.draw(espinhos, inicio - 150, 21);            
+            batch.draw(espinhos, inicio - 150, 21);
+            chao.addNovoEspinho(inicio - 150);
             batch.draw(caixa, inicio - 250, 0, 100, 100);
             chao.addNovaCaixa(inicio - 250);
             inicio = inicio - 250;
@@ -407,6 +411,23 @@ public class Game extends ApplicationAdapter {
     private void perderJogo () {
         gameState = 2;
         //entre outras coisas;
+    }
+
+    private void verificarColisaoEspinho() {
+        int deslocamentoCamera = 0;
+        if ((heroi.getY() <= 40) && (Chao.getFloorHeightBelowCharacter(heroi.getHitbox().x, heroi.getHitbox().width) == 40)){
+            heroi.perdeuVida();
+            // Volta o heroi para cima da última caixa
+            while(Chao.getFloorHeightBelowCharacter(heroi.getHitbox().x, heroi.getHitbox().width) != 100){
+                heroi.setX(heroi.getX() + 1);
+                heroi.hitbox.x = heroi.hitbox.x + 1;
+                deslocamentoCamera++;
+            }
+            heroi.setX(heroi.getX() + 75);
+            heroi.setY(heroi.getY() + 100);
+            heroi.hitbox.y = heroi.hitbox.y + 60;
+            camera.position.x = camera.position.x + (deslocamentoCamera + 75);
+        }
     }
         
 }
